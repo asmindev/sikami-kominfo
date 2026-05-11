@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Head, useForm } from '@inertiajs/react';
+import { route } from 'ziggy-js';
 
 export default function Login() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -19,12 +20,12 @@ export default function Login() {
 
     return (
         <div className="flex min-h-screen flex-col items-center justify-center bg-muted/50 p-4">
-            <Head title="Log in" />
+            <Head title="Masuk" />
 
             <div className="w-full max-w-sm space-y-6 rounded-lg border bg-background p-6 shadow-sm">
                 <div className="space-y-2 text-center">
-                    <h1 className="text-2xl font-semibold tracking-tight">Login</h1>
-                    <p className="text-sm text-muted-foreground">Enter your email below to login to your account</p>
+                    <h1 className="text-2xl font-semibold tracking-tight">Masuk</h1>
+                    <p className="text-sm text-muted-foreground">Masukkan email dan kata sandi untuk masuk ke akun Anda.</p>
                 </div>
 
                 <form onSubmit={submit} className="space-y-4">
@@ -43,13 +44,13 @@ export default function Login() {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="password">Password</Label>
+                        <Label htmlFor="password">Kata Sandi</Label>
                         <Input id="password" type="password" value={data.password} onChange={(e) => setData('password', e.target.value)} required />
                         {errors.password && <p className="text-sm font-medium text-red-500">{errors.password}</p>}
                     </div>
 
                     <Button type="submit" className="w-full" disabled={processing}>
-                        {processing ? 'Logging in...' : 'Log in'}
+                        {processing ? 'Memproses...' : 'Masuk'}
                     </Button>
                 </form>
             </div>

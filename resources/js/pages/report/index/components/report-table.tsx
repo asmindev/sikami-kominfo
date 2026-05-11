@@ -18,11 +18,7 @@ interface ReportTableProps {
 
 export function ReportTable({ reports }: ReportTableProps) {
     if (reports.length === 0) {
-        return (
-            <div className="flex h-32 items-center justify-center rounded-md border bg-slate-50 text-slate-500">
-                Belum ada hasil kalkulasi untuk di-export.
-            </div>
-        );
+        return <div className="flex h-32 items-center justify-center rounded-md border">Belum ada hasil kalkulasi untuk di-export.</div>;
     }
 
     return (

@@ -42,7 +42,7 @@ export default function QuestionnaireIndexPage({ questionnaires, hasActiveDraft 
                     </Can>
                 </div>
 
-                <div className="rounded-lg border bg-white p-4 shadow-sm">
+                <div className="rounded-lg border p-4 shadow-sm">
                     <QuestionnaireTable questionnaires={questionnaires.data} />
                 </div>
             </div>

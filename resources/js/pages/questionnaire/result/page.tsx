@@ -27,7 +27,7 @@ const domainLabels: Record<string, string> = {
     technology: 'Teknologi',
 };
 
-export default function QuestionnaireResultPage({ kamiIndex, domainScores }: Props) {
+export default function QuestionnaireResultPage({ kamiIndex, domainScores = [] }: Props) {
     const chartData = domainScores.map((score) => ({
         name: domainLabels[score.domain_name] || score.domain_name,
         'Nilai Akhir (Skor x Bobot)': parseFloat(score.final_score).toFixed(2),

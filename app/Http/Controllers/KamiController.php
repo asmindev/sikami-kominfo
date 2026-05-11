@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\AhpResult;
 use App\Models\KamiIndex;
+use App\Models\User;
 use App\Services\KamiService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,26 +13,24 @@ use Inertia\Response;
 
 class KamiController extends Controller
 {
-    private KamiService $kamiService;
-
-    public function __construct(KamiService $kamiService)
-    {
-        $this->kamiService = $kamiService;
-    }
+    public function __construct(private KamiService $kamiService) {}
 
     public function calculate(): Response
     {
         $this->authorize('kami-index.calculate');
 
-        // Menampilkan semua user dengan role leader yang sudah submit kuesioner
+        // Cek apakah AHP sudah dihitung dan konsisten
+        $ahpReady = AhpResult::where('is_consistent', true)->exists();
+
+        // Semua leader yang sudah submit kuesioner
         $leaders = User::role('leader')
-            ->whereHas('questionnaires', function ($query) {
-                $query->whereNotNull('submitted_at');
-            })
+            ->whereHas('questionnaires', fn($q) => $q->whereNotNull('submitted_at'))
+            ->select('id', 'name', 'email')
             ->get();
 
         return Inertia::render('kami/calculate/page', [
-            'leaders' => $leaders,
+            'leaders'  => $leaders,
+            'ahpReady' => $ahpReady,
         ]);
     }
 
@@ -39,21 +38,19 @@ class KamiController extends Controller
     {
         $this->authorize('kami-index.calculate');
 
-        $request->validate([
-            'user_id' => ['required', 'exists:users,id'],
-            'system_type' => ['required', 'in:tinggi,rendah'],
+        $validated = $request->validate([
+            'user_id'     => ['required', 'exists:users,id'],
+            'system_type' => ['required', 'in:TINGGI,RENDAH,STRATEGIS'],
         ]);
 
         try {
-            $user = User::findOrFail($request->user_id);
+            $user = User::findOrFail($validated['user_id']);
 
-            // Hapus rekam KAMI sebelumnya (optional, kita replace jika update kuesioner)
-            $user->kamiIndices()->delete();
+            $this->kamiService->calculateKamiAndAhp($user, $validated['system_type']);
 
-            $this->kamiService->calculateKamiAndAhp($user, $request->system_type);
-
-            return redirect()->route('kami.result')
-                ->with('success', 'Perhitungan Indeks KAMI berhasil.');
+            return redirect()
+                ->route('kami.result')
+                ->with('success', 'Perhitungan Indeks KAMI berhasil disimpan.');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -63,7 +60,9 @@ class KamiController extends Controller
     {
         $this->authorize('kami-index.view');
 
-        $kamiIndices = KamiIndex::with(['user', 'domainScores'])->latest()->paginate(10);
+        $kamiIndices = KamiIndex::with(['user:id,name,email', 'domainScores'])
+            ->latest()
+            ->paginate(10);
 
         return Inertia::render('kami/result/page', [
             'kamiIndices' => $kamiIndices,
@@ -74,9 +73,9 @@ class KamiController extends Controller
     {
         $this->authorize('kami-index.view');
 
-        $kamiIndex->load(['user', 'domainScores']);
+        $kamiIndex->load(['user:id,name,email', 'domainScores']);
 
-        return Inertia::render('kami/result/detail/page', [
+        return Inertia::render('kami/show/page', [
             'kamiIndex' => $kamiIndex,
         ]);
     }

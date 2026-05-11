@@ -3,13 +3,13 @@
 namespace App\Providers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\Contracts\LoginResponse;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
 
 use Laravel\Fortify\Fortify;
+use Illuminate\Http\Request;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -17,15 +17,19 @@ class FortifyServiceProvider extends ServiceProvider
     {
         $this->app->singleton(LoginResponse::class, function () {
             return new class implements LoginResponse {
+                /**
+                 * @param Request $request
+                 */
                 public function toResponse($request)
                 {
-                    $user = auth()->user();
+                    /** @var Request $request */
+                    $user = $request->user();
 
                     if ($user->hasRole('admin')) {
                         return redirect()->route('dashboard');
                     }
 
-                    if ($user->hasRole('employee')) {
+                    if ($user->hasRole('leader')) {
                         return redirect()->route('questionnaire.index');
                     }
 

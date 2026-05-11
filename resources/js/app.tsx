@@ -5,13 +5,9 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { Toaster } from 'sonner';
-import { route as routeFn } from 'ziggy-js';
+import { TooltipProvider } from './components/ui/tooltip';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-
-declare global {
-    var route: typeof routeFn;
-}
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
@@ -20,14 +16,15 @@ createInertiaApp({
         const root = createRoot(el);
 
         root.render(
-            <ThemeProvider>
-                <Toaster />
-                <App {...props} />
-            </ThemeProvider>,
+            <TooltipProvider>
+                <ThemeProvider>
+                    <Toaster />
+                    <App {...props} />
+                </ThemeProvider>
+            </TooltipProvider>,
         );
     },
     progress: {
         color: 'var(--destructive)',
     },
 });
-window.route = routeFn;

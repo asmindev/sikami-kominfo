@@ -1,17 +1,16 @@
 import { AppSidebar } from '@/components/app-sidebar';
-import { Separator } from '@/components/ui/separator';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { PageProps } from '@/types';
 import { usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
-interface AdminLayoutProps {
+interface AppLayoutProps {
     children: React.ReactNode;
     header?: React.ReactNode;
 }
 
-export default function AdminLayout({ children, header }: AdminLayoutProps) {
+export default function AppLayout({ children, header }: AppLayoutProps) {
     const { props } = usePage<PageProps>();
 
     useEffect(() => {
@@ -25,15 +24,15 @@ export default function AdminLayout({ children, header }: AdminLayoutProps) {
     return (
         <SidebarProvider>
             <AppSidebar />
-            <SidebarInset className="flex min-w-0 flex-col">
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarInset className="relative flex min-w-0 flex-col">
+                <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b px-4 backdrop-blur supports-backdrop-filter:bg-background/20">
                     <SidebarTrigger className="-ml-1" />
-                    <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+                    {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
                     <h1 className="font-black">SIKAMI</h1>
                     {header && <div className="ml-auto">{header}</div>}
                 </header>
 
-                <div className="flex min-w-0 flex-1 flex-col gap-4 overflow-auto p-4 pt-0">{children}</div>
+                <div className="flex min-w-0 flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
             </SidebarInset>
         </SidebarProvider>
     );

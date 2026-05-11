@@ -8,9 +8,10 @@ import { route } from 'ziggy-js';
 
 interface Props {
     questions: Question[];
+    meta?: any;
 }
 
-export function QuestionTable({ questions }: Props) {
+export function QuestionTable({ questions, meta }: Props) {
     const { delete: destroy } = useForm();
 
     const handleDelete = (id: number) => {
@@ -26,6 +27,9 @@ export function QuestionTable({ questions }: Props) {
         asset_management: 'Manajemen Aset',
         technology: 'Teknologi',
     };
+
+    // Calculate offset from meta.from, atau compute dari current_page dan per_page
+    const offset = meta?.from ? meta.from - 1 : meta?.current_page && meta?.per_page ? (meta.current_page - 1) * meta.per_page : 0;
 
     return (
         <div className="rounded-md border">
@@ -43,7 +47,7 @@ export function QuestionTable({ questions }: Props) {
                     {questions.length > 0 ? (
                         questions.map((question, index) => (
                             <TableRow key={question.id}>
-                                <TableCell>{index + 1}</TableCell>
+                                <TableCell>{offset + index + 1}</TableCell>
                                 <TableCell>
                                     <Badge variant="outline">{domainLabels[question.domain] || question.domain}</Badge>
                                 </TableCell>

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AdminLayout from '@/layouts/admin-layout';
 import type { PageProps } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { FileSpreadsheet } from 'lucide-react';
 import { route } from 'ziggy-js';
 import { ReportTable } from './components/report-table';
@@ -30,10 +30,10 @@ export default function ReportPage({ reports }: ReportPageProps) {
                     <div className="flex shrink-0 gap-2">
                         <Can permission="report.export">
                             <Button variant="default" className="bg-emerald-600 hover:bg-emerald-700" asChild>
-                                <a href={route('report.export-excel')}>
+                                <Link href={route('report.export-excel')}>
                                     <FileSpreadsheet className="mr-2 h-4 w-4" />
                                     Eksport Semua (Excel)
-                                </a>
+                                </Link>
                             </Button>
                         </Can>
                     </div>

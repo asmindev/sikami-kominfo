@@ -3,7 +3,7 @@ import AdminLayout from '@/layouts/admin-layout';
 import type { PageProps } from '@/types';
 import { Head } from '@inertiajs/react';
 import { ConsistencyAlert } from './components/consistency-alert';
-import { PairwiseMatrix } from './index';
+import { PairwiseMatrix } from './components/pairwise-matrix';
 import type { Criteria, PairwiseComparison } from './types';
 
 interface AhpResult {

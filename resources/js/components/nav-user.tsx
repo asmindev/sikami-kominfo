@@ -13,6 +13,7 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import { useTheme } from '@/context/theme-context';
 import { useForm } from '@inertiajs/react';
+import { route } from 'ziggy-js';
 
 export function NavUser({
     user,
@@ -70,24 +71,24 @@ export function NavUser({
                         <DropdownMenuGroup>
                             <DropdownMenuItem onClick={() => setTheme('light')}>
                                 <Sun className="mr-2 h-4 w-4" />
-                                <span>Light</span>
+                                <span>Terang</span>
                                 {theme === 'light' && <span className="ml-auto text-xs">✓</span>}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => setTheme('dark')}>
                                 <Moon className="mr-2 h-4 w-4" />
-                                <span>Dark</span>
+                                <span>Gelap</span>
                                 {theme === 'dark' && <span className="ml-auto text-xs">✓</span>}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => setTheme('system')}>
                                 <LucideDivideCircle className="mr-2 h-4 w-4" />
-                                <span>System</span>
+                                <span>Sistem</span>
                                 {theme === 'system' && <span className="ml-auto text-xs">✓</span>}
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout}>
                             <LogOut />
-                            Log out
+                            Keluar
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

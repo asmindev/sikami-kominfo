@@ -1,7 +1,7 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import AdminLayout from '@/layouts/admin-layout';
+import AppLayout from '@/layouts/admin-layout';
 import type { PageProps, Question } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { AlertCircle } from 'lucide-react';
@@ -121,7 +121,7 @@ export default function QuestionnaireFilPage({ questions }: Props) {
     };
 
     return (
-        <AdminLayout>
+        <AppLayout>
             <Head title="Isi Kuesioner KAMI" />
             <div className="w-full pb-10">
                 <div className="mb-6 space-y-2 pt-6 text-center">
@@ -186,6 +186,6 @@ export default function QuestionnaireFilPage({ questions }: Props) {
                     </div>
                 </div>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }

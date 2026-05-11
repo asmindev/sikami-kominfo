@@ -16,6 +16,10 @@ class RoleAndPermissionSeeder extends Seeder
         // Create permissions
         $adminPermissions = [
             'dashboard.view',
+            'employee.view',
+            'employee.create',
+            'employee.edit',
+            'employee.delete',
             'leader.view',
             'leader.create',
             'leader.edit',
@@ -43,10 +47,12 @@ class RoleAndPermissionSeeder extends Seeder
         }
 
         // Create roles and assign permissions
-        $adminRole   = Role::firstOrCreate(['name' => 'admin']);
-        $leaderRole  = Role::firstOrCreate(['name' => 'leader']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $leaderRole = Role::firstOrCreate(['name' => 'leader']);
+        $employeeRole = Role::firstOrCreate(['name' => 'employee']);
 
         $adminRole->syncPermissions($adminPermissions);
         $leaderRole->syncPermissions($leaderPermissions);
+        $employeeRole->syncPermissions([]);
     }
 }

@@ -52,13 +52,13 @@ export default function KamiResultPage({ kamiIndices }: Props) {
                 <Card>
                     <CardContent className="p-0">
                         <Table>
-                            <TableHeader className="bg-slate-50">
+                            <TableHeader>
                                 <TableRow>
                                     <TableHead>Nama Pimpinan</TableHead>
                                     <TableHead>Kategori</TableHead>
                                     <TableHead>Total Skor Akhir</TableHead>
                                     <TableHead>Tgl Hitung</TableHead>
-                                    <TableHead className="w-[100px]"></TableHead>
+                                    <TableHead className="w-25"></TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>

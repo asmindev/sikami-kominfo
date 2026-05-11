@@ -4,7 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -15,9 +15,9 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
 
-    public function employee(): HasOne
+    public function position(): BelongsTo
     {
-        return $this->hasOne(Employee::class);
+        return $this->belongsTo(Position::class);
     }
 
     public function questionnaires()
@@ -39,6 +39,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'nip',
+        'position_id',
     ];
 
     /**

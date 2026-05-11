@@ -5,7 +5,7 @@ export function ScaleLegend() {
     return (
         <Card>
             <CardContent className="pt-4">
-                <p className="mb-3 text-xs font-semibold text-slate-700 sm:text-sm">Legenda Skala Saaty:</p>
+                <p className="mb-3 text-xs font-semibold sm:text-sm">Legenda Skala Saaty:</p>
                 <div className="grid grid-cols-3 gap-1 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9">
                     {SCALE_DESCRIPTIONS.map((scale) => (
                         <div key={scale.value} className="flex flex-col items-center gap-0.5">
@@ -15,7 +15,7 @@ export function ScaleLegend() {
                             >
                                 {scale.label}
                             </div>
-                            <p className="line-clamp-1 text-center text-xs text-slate-600">{scale.description}</p>
+                            <p className="line-clamp-1 text-center text-xs text-muted-foreground">{scale.description}</p>
                         </div>
                     ))}
                 </div>

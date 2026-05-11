@@ -15,10 +15,39 @@ class QuestionController extends Controller
     {
         $this->authorize('question.view');
 
-        $questions = Question::orderBy('domain')->orderBy('order')->paginate(15);
+        $domain = request('domain');
+        $search = request('search');
+
+        $query = Question::query();
+        if ($domain && $domain !== 'all') {
+            $query->where('domain', $domain);
+        }
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('indicator', 'like', "%$search%")
+                    ->orWhere('question_text', 'like', "%$search%")
+                    ->orWhere('domain', 'like', "%$search%")
+                ;
+            });
+        }
+
+        $questions = $query->orderBy('domain')->orderBy('order')->paginate(10)->withQueryString();
+
+        $domains = [
+            'governance' => 'Tata Kelola',
+            'risk_management' => 'Manajemen Risiko',
+            'framework' => 'Kerangka Kerja',
+            'asset_management' => 'Manajemen Aset',
+            'technology' => 'Teknologi',
+        ];
 
         return Inertia::render('question/index/page', [
             'questions' => $questions,
+            'domains' => $domains,
+            'filter' => [
+                'domain' => $domain,
+                'search' => $search,
+            ],
         ]);
     }
 

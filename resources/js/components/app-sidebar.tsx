@@ -1,9 +1,10 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Calculator, FileText, LayoutDashboard, Shield } from 'lucide-react';
+import { Calculator, ChevronRight, ClipboardList, FileText, LayoutDashboard, Shield, Users } from 'lucide-react';
 import * as React from 'react';
 import { route } from 'ziggy-js';
 
 import { Can } from '@/components/can';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
     Sidebar,
     SidebarContent,
@@ -37,17 +38,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         permission: 'dashboard.view' as Permission,
     };
 
-    // Define all nav items with their permissions
     const dataManagementItems = [
         {
             title: 'Data Pimpinan',
             url: route('leader.index'),
+            icon: Users,
             isActive: url.startsWith('/leader'),
             permission: 'leader.view' as Permission,
         },
         {
             title: 'Data Pertanyaan',
             url: route('question.index'),
+            icon: ClipboardList,
             isActive: url.startsWith('/question'),
             permission: 'question.view' as Permission,
         },
@@ -98,13 +100,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         },
     ];
 
-    // Check if user has any permission in a group
-    const hasAnyPermissionInGroup = (permissions: Permission[]): boolean => {
-        return permissions.some((perm) => can(perm));
-    };
-
     return (
-        <Sidebar {...props} collapsible="icon">
+        <Sidebar collapsible="icon" {...props}>
+            {/* ── Header ── */}
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
@@ -122,22 +120,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
+
+            {/* ── Content ── */}
             <SidebarContent>
-                <SidebarMenu>
-                    <Can permission={dashboardItem.permission}>
-                        <SidebarMenuItem>
-                            <SidebarMenuButton asChild tooltip={dashboardItem.title} isActive={dashboardItem.isActive}>
-                                <Link href={dashboardItem.url} className="font-medium">
-                                    {<dashboardItem.icon />}
-                                    <span>{dashboardItem.title}</span>
-                                </Link>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-                    </Can>
-                </SidebarMenu>
+                {/* Dashboard */}
+                <SidebarGroup>
+                    <SidebarMenu>
+                        <Can permission={dashboardItem.permission}>
+                            <SidebarMenuItem>
+                                <SidebarMenuButton asChild tooltip={dashboardItem.title} isActive={dashboardItem.isActive}>
+                                    <Link href={dashboardItem.url}>
+                                        <dashboardItem.icon />
+                                        <span>{dashboardItem.title}</span>
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        </Can>
+                    </SidebarMenu>
+                </SidebarGroup>
 
                 {/* Manajemen Data */}
-                <Can permission={dataManagementItems.map((item) => item.permission)}>
+                <Can permission={dataManagementItems.map((i) => i.permission)}>
                     <SidebarGroup>
                         <SidebarGroupLabel>Manajemen Data</SidebarGroupLabel>
                         <SidebarMenu>
@@ -145,7 +148,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 <Can key={item.title} permission={item.permission}>
                                     <SidebarMenuItem>
                                         <SidebarMenuButton asChild tooltip={item.title} isActive={item.isActive}>
-                                            <Link href={item.url} className="font-medium">
+                                            <Link href={item.url}>
+                                                <item.icon />
                                                 <span>{item.title}</span>
                                             </Link>
                                         </SidebarMenuButton>
@@ -157,61 +161,75 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </Can>
 
                 {/* Analisis & Evaluasi */}
-                <Can permission={[...ahpItems.map((item) => item.permission), ...kamiItems.map((item) => item.permission)]}>
+                <Can permission={[...ahpItems.map((i) => i.permission), ...kamiItems.map((i) => i.permission)]}>
                     <SidebarGroup>
-                        <SidebarGroupLabel>Analisis & Evaluasi</SidebarGroupLabel>
+                        <SidebarGroupLabel>Analisis &amp; Evaluasi</SidebarGroupLabel>
                         <SidebarMenu>
-                            {/* AHP Section */}
-                            <Can permission={ahpItems.map((item) => item.permission)}>
-                                <SidebarMenuItem>
-                                    <SidebarMenuButton asChild isActive={url.startsWith('/ahp')}>
-                                        <div className="cursor-pointer font-medium">
-                                            <Calculator className="size-4" />
-                                            <span>Metode AHP</span>
-                                        </div>
-                                    </SidebarMenuButton>
-                                    <SidebarMenuSub>
-                                        {ahpItems.map((item) => (
-                                            <Can key={item.title} permission={item.permission}>
-                                                <SidebarMenuSubItem>
-                                                    <SidebarMenuSubButton asChild isActive={item.isActive}>
-                                                        <Link href={item.url}>{item.title}</Link>
-                                                    </SidebarMenuSubButton>
-                                                </SidebarMenuSubItem>
-                                            </Can>
-                                        ))}
-                                    </SidebarMenuSub>
-                                </SidebarMenuItem>
+                            {/* AHP — collapsible submenu */}
+                            <Can permission={ahpItems.map((i) => i.permission)}>
+                                <Collapsible asChild defaultOpen={url.startsWith('/ahp')} className="group/collapsible">
+                                    <SidebarMenuItem>
+                                        <CollapsibleTrigger asChild>
+                                            <SidebarMenuButton tooltip="Metode AHP" isActive={url.startsWith('/ahp')}>
+                                                <Calculator />
+                                                <span>Metode AHP</span>
+                                                <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                            </SidebarMenuButton>
+                                        </CollapsibleTrigger>
+                                        <CollapsibleContent>
+                                            <SidebarMenuSub>
+                                                {ahpItems.map((item) => (
+                                                    <Can key={item.title} permission={item.permission}>
+                                                        <SidebarMenuSubItem>
+                                                            <SidebarMenuSubButton asChild isActive={item.isActive}>
+                                                                <Link href={item.url}>
+                                                                    <span>{item.title}</span>
+                                                                </Link>
+                                                            </SidebarMenuSubButton>
+                                                        </SidebarMenuSubItem>
+                                                    </Can>
+                                                ))}
+                                            </SidebarMenuSub>
+                                        </CollapsibleContent>
+                                    </SidebarMenuItem>
+                                </Collapsible>
                             </Can>
 
-                            {/* KAMI Section */}
-                            <Can permission={kamiItems.map((item) => item.permission)}>
-                                <SidebarMenuItem>
-                                    <SidebarMenuButton asChild isActive={url.startsWith('/kami')}>
-                                        <div className="cursor-pointer font-medium">
-                                            <Shield className="size-4" />
-                                            <span>Indeks KAMI</span>
-                                        </div>
-                                    </SidebarMenuButton>
-                                    <SidebarMenuSub>
-                                        {kamiItems.map((item) => (
-                                            <Can key={item.title} permission={item.permission}>
-                                                <SidebarMenuSubItem>
-                                                    <SidebarMenuSubButton asChild isActive={item.isActive}>
-                                                        <Link href={item.url}>{item.title}</Link>
-                                                    </SidebarMenuSubButton>
-                                                </SidebarMenuSubItem>
-                                            </Can>
-                                        ))}
-                                    </SidebarMenuSub>
-                                </SidebarMenuItem>
+                            {/* KAMI — collapsible submenu */}
+                            <Can permission={kamiItems.map((i) => i.permission)}>
+                                <Collapsible asChild defaultOpen={url.startsWith('/kami')} className="group/collapsible">
+                                    <SidebarMenuItem>
+                                        <CollapsibleTrigger asChild>
+                                            <SidebarMenuButton tooltip="Indeks KAMI" isActive={url.startsWith('/kami')}>
+                                                <Shield />
+                                                <span>Indeks KAMI</span>
+                                                <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                            </SidebarMenuButton>
+                                        </CollapsibleTrigger>
+                                        <CollapsibleContent>
+                                            <SidebarMenuSub>
+                                                {kamiItems.map((item) => (
+                                                    <Can key={item.title} permission={item.permission}>
+                                                        <SidebarMenuSubItem>
+                                                            <SidebarMenuSubButton asChild isActive={item.isActive}>
+                                                                <Link href={item.url}>
+                                                                    <span>{item.title}</span>
+                                                                </Link>
+                                                            </SidebarMenuSubButton>
+                                                        </SidebarMenuSubItem>
+                                                    </Can>
+                                                ))}
+                                            </SidebarMenuSub>
+                                        </CollapsibleContent>
+                                    </SidebarMenuItem>
+                                </Collapsible>
                             </Can>
                         </SidebarMenu>
                     </SidebarGroup>
                 </Can>
 
                 {/* Laporan */}
-                <Can permission={reportItems.map((item) => item.permission)}>
+                <Can permission={reportItems.map((i) => i.permission)}>
                     <SidebarGroup>
                         <SidebarGroupLabel>Laporan</SidebarGroupLabel>
                         <SidebarMenu>
@@ -219,8 +237,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 <Can key={item.title} permission={item.permission}>
                                     <SidebarMenuItem>
                                         <SidebarMenuButton asChild tooltip={item.title} isActive={item.isActive}>
-                                            <Link href={item.url} className="font-medium">
-                                                <FileText className="size-4" />
+                                            <Link href={item.url}>
+                                                <FileText />
                                                 <span>{item.title}</span>
                                             </Link>
                                         </SidebarMenuButton>
@@ -231,12 +249,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </SidebarGroup>
                 </Can>
             </SidebarContent>
+
             <SidebarRail />
+
+            {/* ── Footer ── */}
             <SidebarFooter>
                 <NavUser
                     user={{
-                        name: auth.user?.name || 'Guest',
-                        email: auth.user?.email || '',
+                        name: auth.user?.name ?? 'Guest',
+                        email: auth.user?.email ?? '',
                         avatar: '',
                     }}
                 />

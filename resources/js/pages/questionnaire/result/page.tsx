@@ -8,8 +8,8 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
 import { route } from 'ziggy-js';
 
 interface Props extends PageProps {
-    kamiIndex: any;
-    domainScores: any[];
+    kamiIndex: any | null;
+    questionnaire: any;
 }
 
 const CATEGORY_CONFIG: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
@@ -27,8 +27,46 @@ const domainLabels: Record<string, string> = {
     technology: 'Teknologi',
 };
 
-export default function QuestionnaireResultPage({ kamiIndex, domainScores = [] }: Props) {
-    const chartData = domainScores.map((score) => ({
+export default function QuestionnaireResultPage({ kamiIndex, questionnaire }: Props) {
+    if (!kamiIndex) {
+        return (
+            <AdminLayout>
+                <Head title="Hasil Evaluasi Indeks KAMI" />
+                <div className="mx-auto max-w-5xl space-y-6">
+                    <div className="flex items-center justify-between">
+                        <div className="space-y-1">
+                            <h1 className="text-2xl font-bold tracking-tight">Hasil Evaluasi Indeks KAMI</h1>
+                        </div>
+                        <Button variant="outline" asChild>
+                            <Link href={route('questionnaire.index')}>Kembali ke Daftar</Link>
+                        </Button>
+                    </div>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Hasil Belum Tersedia</CardTitle>
+                            <CardDescription>Menunggu kalkulasi evaluasi KAMI dari administrator.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm text-muted-foreground">
+                                Kuesioner Anda telah berhasil disimpan pada{' '}
+                                {questionnaire ? new Date(questionnaire.submitted_at).toLocaleDateString('id-ID', {
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                }) : 'waktu yang tidak diketahui'}. Administrator akan segera memproses hasilnya menggunakan metode AHP.
+                            </p>
+                        </CardContent>
+                    </Card>
+                </div>
+            </AdminLayout>
+        );
+    }
+
+    const domainScores = kamiIndex.domain_scores || [];
+    
+    const chartData = domainScores.map((score: any) => ({
         name: domainLabels[score.domain_name] || score.domain_name,
         'Nilai Akhir (Skor x Bobot)': parseFloat(score.final_score).toFixed(2),
         'Skor Mentah': parseFloat(score.domain_score).toFixed(2),
@@ -69,7 +107,7 @@ export default function QuestionnaireResultPage({ kamiIndex, domainScores = [] }
                             </div>
 
                             <div className="mt-6 grid grid-cols-5 gap-4 text-center">
-                                {domainScores.map((ds) => (
+                                {domainScores.map((ds: any) => (
                                     <div key={ds.id} className="space-y-2">
                                         <div
                                             className="line-clamp-1 text-xs font-semibold text-muted-foreground"

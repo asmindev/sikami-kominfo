@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleAndPermissionSeeder extends Seeder
 {
@@ -16,18 +16,20 @@ class RoleAndPermissionSeeder extends Seeder
         // Create permissions
         $adminPermissions = [
             'dashboard.view',
-            'employee.view',
-            'employee.create',
-            'employee.edit',
-            'employee.delete',
-            'leader.view',
-            'leader.create',
-            'leader.edit',
-            'leader.delete',
+            'user.view',
+            'user.create',
+            'user.edit',
+            'user.delete',
+            'position.view',
+            'position.create',
+            'position.edit',
+            'position.delete',
             'question.view',
             'question.create',
             'question.edit',
             'question.delete',
+            'questionnaire.fill',
+            'questionnaire-result.view',
             'ahp-pairwise.view',
             'ahp-pairwise.create',
             'ahp-result.view',

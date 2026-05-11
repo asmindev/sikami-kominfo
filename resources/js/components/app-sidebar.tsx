@@ -40,11 +40,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
     const dataManagementItems = [
         {
-            title: 'Data Pimpinan',
-            url: route('leader.index'),
+            title: 'Data Pengguna',
+            url: route().has('user.index') ? route('user.index') : '#',
             icon: Users,
-            isActive: url.startsWith('/leader'),
-            permission: 'leader.view' as Permission,
+            isActive: url.startsWith('/user'),
+            permission: 'user.view' as Permission,
+        },
+        {
+            title: 'Data Jabatan',
+            url: route().has('position.index') ? route('position.index') : '#',
+            icon: Shield,
+            isActive: url.startsWith('/position'),
+            permission: 'position.view' as Permission,
         },
         {
             title: 'Data Pertanyaan',
@@ -52,6 +59,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             icon: ClipboardList,
             isActive: url.startsWith('/question'),
             permission: 'question.view' as Permission,
+        },
+        {
+            title: 'Isi Kuis',
+            url: route('questionnaire.index'),
+            icon: FileText,
+            isActive: url.startsWith('/questionnaire/fill'),
+            permission: 'questionnaire.fill' as Permission,
+        },
+        {
+            title: 'Hasil Kuesioner',
+            url: route('questionnaire.result'),
+            icon: FileText,
+            isActive: url.startsWith('/questionnaire/result'),
+            permission: 'questionnaire-result.view' as Permission,
         },
     ];
 

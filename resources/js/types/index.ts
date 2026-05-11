@@ -26,7 +26,9 @@ export interface Question {
     id: number;
     domain: AhpDomain;
     indicator: string;
+    maturity_level: number;
     question_text: string;
+    score_weight: number;
     order: number;
     created_at: string;
     updated_at: string;
@@ -35,6 +37,7 @@ export interface Question {
 export type KamiCategory = 'not_eligible' | 'basic_framework' | 'good_enough' | 'good';
 
 export interface PageProps {
+    [key: string]: unknown;
     ziggy: Config & { location: string };
     auth: {
         user: AuthUser | null;

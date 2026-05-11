@@ -2,57 +2,59 @@
 
 namespace App\Providers;
 
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Laravel\Fortify\Contracts\LoginResponse;
-use Illuminate\Support\ServiceProvider;
-use Inertia\Inertia;
-
-use Laravel\Fortify\Fortify;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\ServiceProvider;
+use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
 {
+    /**
+     * Register any application services.
+     */
     public function register(): void
     {
-        $this->app->singleton(LoginResponse::class, function () {
-            return new class implements LoginResponse {
-                /**
-                 * @param Request $request
-                 */
-                public function toResponse($request)
-                {
-                    /** @var Request $request */
-                    $user = $request->user();
-
-                    if ($user->hasRole('admin')) {
-                        return redirect()->route('dashboard');
-                    }
-
-                    if ($user->hasRole('leader')) {
-                        return redirect()->route('questionnaire.index');
-                    }
-
-                    return redirect('/');
-                }
-            };
+        // Require fortify configuration if missing
+        $this->app->singleton('config', function () {
+            $config = require config_path('fortify.php');
+            return collect($config);
         });
+        // $this->app->ignoreNamespace('Laravel\Fortify');
     }
 
+    /**
+     * Bootstrap any application services.
+     */
     public function boot(): void
     {
-        // Render login page via Inertia
         Fortify::loginView(function () {
-            return Inertia::render('auth/login/page');
+            return inertia('auth/login/page');
         });
 
-        // Custom authentication logic — redirect based on role after login
-        Fortify::authenticateUsing(function (Request $request) {
-            $user = User::where('email', $request->email)->first();
+        RateLimiter::for('login', function (Request $request) {
+            $email = (string) $request->email;
 
-            if ($user && Hash::check($request->password, $user->password)) {
-                return $user;
+            return Limit::perMinute(5)->by($email . $request->ip());
+        });
+
+        // Config redirect setelah login sesuai role/permission
+        Fortify::redirects('login', function () {
+            if (auth()->check()) {
+                if (auth()->user()->can('dashboard.view')) {
+                    return route('dashboard');
+                }
+                if (auth()->user()->can('questionnaire.fill')) {
+                    return route('questionnaire.index');
+                }
             }
+
+            return route('dashboard'); // fallback
+        });
+
+        // Redirect setelah logout
+        Fortify::redirects('logout', function () {
+            return route('login');
         });
     }
 }

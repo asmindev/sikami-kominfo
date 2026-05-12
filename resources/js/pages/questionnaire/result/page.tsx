@@ -1,15 +1,47 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import AdminLayout from '@/layouts/admin-layout';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import AppLayout from '@/layouts/admin-layout';
 import type { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { route } from 'ziggy-js';
 
 interface Props extends PageProps {
-    kamiIndex: any | null;
-    questionnaire: any;
+    isAdminView?: boolean;
+    kamiIndex?: KamiIndexData | null;
+    questionnaires?: { data: QuestionnaireRow[] } | null;
+}
+
+interface QuestionnaireRow {
+    id: number;
+    submitted_at: string | null;
+    answers_count?: number;
+    user?: {
+        name?: string | null;
+        position?: {
+            name?: string | null;
+        } | null;
+    } | null;
+}
+
+interface KamiIndexData {
+    total_score: number | string;
+    category: string;
+    calculated_at: string;
+    user?: {
+        name?: string | null;
+    } | null;
+    domain_scores?: DomainScoreData[] | null;
+}
+
+interface DomainScoreData {
+    id: number;
+    domain_name: string;
+    final_score: number | string;
+    domain_score: number | string;
+    ahp_weight: number | string;
 }
 
 const CATEGORY_CONFIG: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
@@ -27,53 +59,105 @@ const domainLabels: Record<string, string> = {
     technology: 'Teknologi',
 };
 
-export default function QuestionnaireResultPage({ kamiIndex, questionnaire }: Props) {
+export default function QuestionnaireResultPage({ isAdminView, kamiIndex, questionnaires }: Props) {
+    if (isAdminView) {
+        const questionnaireRows = questionnaires?.data ?? [];
+
+        return (
+            <AppLayout>
+                <Head title="Hasil Evaluasi Indeks KAMI" />
+                <div className="mx-auto w-full space-y-6">
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-bold tracking-tight">Hasil Evaluasi Indeks KAMI</h1>
+                        <p className="text-sm text-muted-foreground">Daftar semua kuesioner yang sudah disubmit oleh pimpinan.</p>
+                    </div>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Semua Hasil Kuis</CardTitle>
+                            <CardDescription>Menampilkan seluruh kuesioner yang sudah selesai diisi.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="overflow-hidden rounded-md border">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>No</TableHead>
+                                            <TableHead>Pimpinan</TableHead>
+                                            <TableHead>Jabatan</TableHead>
+                                            <TableHead>Jumlah Jawaban</TableHead>
+                                            <TableHead>Disubmit</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {questionnaireRows.length > 0 ? (
+                                            questionnaireRows.map((questionnaire, index) => (
+                                                <TableRow key={questionnaire.id}>
+                                                    <TableCell>{index + 1}</TableCell>
+                                                    <TableCell>{questionnaire.user?.name ?? '-'}</TableCell>
+                                                    <TableCell>{questionnaire.user?.position?.name ?? '-'}</TableCell>
+                                                    <TableCell>{questionnaire.answers_count ?? 0}</TableCell>
+                                                    <TableCell>
+                                                        {questionnaire.submitted_at
+                                                            ? new Date(questionnaire.submitted_at).toLocaleDateString('id-ID')
+                                                            : '-'}
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                        ) : (
+                                            <TableRow>
+                                                <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
+                                                    Belum ada kuesioner yang disubmit.
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </AppLayout>
+        );
+    }
+
     if (!kamiIndex) {
         return (
-            <AdminLayout>
+            <AppLayout>
                 <Head title="Hasil Evaluasi Indeks KAMI" />
-                <div className="mx-auto max-w-5xl space-y-6">
+                <div className="mx-auto w-full space-y-6">
                     <div className="flex items-center justify-between">
                         <div className="space-y-1">
                             <h1 className="text-2xl font-bold tracking-tight">Hasil Evaluasi Indeks KAMI</h1>
+                            <p className="text-sm text-muted-foreground">Belum ada hasil evaluasi yang dihitung untuk Anda.</p>
                         </div>
                         <Button variant="outline" asChild>
                             <Link href={route('questionnaire.index')}>Kembali ke Daftar</Link>
                         </Button>
                     </div>
                     <Card>
-                        <CardHeader>
-                            <CardTitle>Hasil Belum Tersedia</CardTitle>
-                            <CardDescription>Menunggu kalkulasi evaluasi KAMI dari administrator.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-sm text-muted-foreground">
-                                Kuesioner Anda telah berhasil disimpan pada{' '}
-                                {questionnaire ? new Date(questionnaire.submitted_at).toLocaleDateString('id-ID', {
-                                    day: 'numeric',
-                                    month: 'long',
-                                    year: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                }) : 'waktu yang tidak diketahui'}. Administrator akan segera memproses hasilnya menggunakan metode AHP.
+                        <CardContent className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
+                            <p>
+                                Kuesioner Anda telah tersimpan. Data Indeks KAMI belum tersedia karena Admin perlu memproses hasil evaluasi tersebut
+                                terlebih dahulu.
                             </p>
                         </CardContent>
                     </Card>
                 </div>
-            </AdminLayout>
+            </AppLayout>
         );
     }
 
-    const domainScores = kamiIndex.domain_scores || [];
-    
-    const chartData = domainScores.map((score: any) => ({
+    const domainScores = kamiIndex?.domain_scores || [];
+
+    const chartData = domainScores.map((score) => ({
         name: domainLabels[score.domain_name] || score.domain_name,
-        'Nilai Akhir (Skor x Bobot)': parseFloat(score.final_score).toFixed(2),
-        'Skor Mentah': parseFloat(score.domain_score).toFixed(2),
+        'Nilai Akhir (Skor x Bobot)': Number(score.final_score).toFixed(2),
+        'Skor Mentah': Number(score.domain_score).toFixed(2),
     }));
 
     return (
-        <AdminLayout>
+        <AppLayout>
             <Head title="Hasil Evaluasi Indeks KAMI" />
             <div className="mx-auto max-w-5xl space-y-6">
                 <div className="flex items-center justify-between">
@@ -107,7 +191,7 @@ export default function QuestionnaireResultPage({ kamiIndex, questionnaire }: Pr
                             </div>
 
                             <div className="mt-6 grid grid-cols-5 gap-4 text-center">
-                                {domainScores.map((ds: any) => (
+                                {domainScores.map((ds) => (
                                     <div key={ds.id} className="space-y-2">
                                         <div
                                             className="line-clamp-1 text-xs font-semibold text-muted-foreground"
@@ -151,7 +235,7 @@ export default function QuestionnaireResultPage({ kamiIndex, questionnaire }: Pr
                         <CardTitle>Grafik Perbandingan Domain</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="h-[400px] w-full">
+                        <div className="h-100 w-full">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -167,6 +251,6 @@ export default function QuestionnaireResultPage({ kamiIndex, questionnaire }: Pr
                     </CardContent>
                 </Card>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }

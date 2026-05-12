@@ -24,7 +24,7 @@ Route::middleware('guest')->group(function () {
 
 Route::get('/', function () {
     if (auth()->check()) {
-        if (auth()->user()->can('dashboard.view')) {
+        if (auth()->user()->hasRole('admin')) {
             return redirect()->route('dashboard');
         }
         if (auth()->user()->can('questionnaire.fill') || auth()->user()->can('questionnaire-result.view')) {
@@ -83,6 +83,7 @@ Route::middleware('auth')->group(function () {
     // Questionnaire
     Route::get('/questionnaire', [QuestionnaireController::class, 'index'])->name('questionnaire.index');
     Route::get('/questionnaire/fill', [QuestionnaireController::class, 'fill'])->name('questionnaire.fill');
+    Route::post('/questionnaire/draft', [QuestionnaireController::class, 'draft'])->name('questionnaire.draft');
     Route::post('/questionnaire/submit', [QuestionnaireController::class, 'submit'])->name('questionnaire.submit');
     Route::get('/questionnaire/result', [QuestionnaireController::class, 'result'])->name('questionnaire.result');
 });

@@ -12,6 +12,7 @@ import { StepIndicator } from './components/step-indicator';
 
 interface Props extends PageProps {
     questions: Question[];
+    draftAnswers?: Record<number, number | null>;
 }
 
 const DOMAIN_ORDER = ['governance', 'risk_management', 'framework', 'asset_management', 'technology'] as const;
@@ -32,17 +33,18 @@ const DOMAIN_DESCRIPTIONS: Record<string, string> = {
     technology: 'Menilai kontrol teknis, pengamanan aplikasi, dan infrastruktur sistem informasi.',
 };
 
-export default function QuestionnaireFilPage({ questions }: Props) {
+export default function QuestionnaireFilPage({ questions, draftAnswers }: Props) {
     const [currentStep, setCurrentStep] = useState(0);
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [isDrafting, setIsDrafting] = useState(false);
 
-    // Initialize all answers to null
+    // Initialize answers from draft if available
     const { data, setData, post, processing } = useForm<{
         answers: Array<{ question_id: number; score: number | null }>;
     }>({
         answers: questions.map((q) => ({
             question_id: q.id,
-            score: null,
+            score: draftAnswers?.[q.id] ?? null,
         })),
     });
 
@@ -120,6 +122,14 @@ export default function QuestionnaireFilPage({ questions }: Props) {
         });
     };
 
+    const handleDraft = () => {
+        setIsDrafting(true);
+        post(route('questionnaire.draft'), {
+            preserveScroll: true,
+            onFinish: () => setIsDrafting(false),
+        });
+    };
+
     return (
         <AppLayout>
             <Head title="Isi Kuesioner KAMI" />
@@ -152,37 +162,45 @@ export default function QuestionnaireFilPage({ questions }: Props) {
                     )}
 
                     <div className="flex justify-between border-t pt-6">
-                        <Button variant="outline" onClick={handlePrevious} disabled={currentStep === 0 || processing}>
+                        <Button variant="outline" onClick={handlePrevious} disabled={currentStep === 0 || processing || isDrafting}>
                             Kembali
                         </Button>
 
-                        {currentStep < DOMAIN_ORDER.length - 1 ? (
-                            <Button onClick={handleNext} disabled={!isCurrentStepComplete}>
-                                Lanjut
+                        <div className="flex gap-2">
+                            <Button variant="secondary" onClick={handleDraft} disabled={processing || isDrafting}>
+                                {isDrafting ? 'Menyimpan...' : 'Simpan Draft'}
                             </Button>
-                        ) : (
-                            <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
-                                <DialogTrigger asChild>
-                                    <Button disabled={!isAllComplete || processing}>{processing ? 'Mengirim...' : 'Kirim Kuesioner'}</Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>Konfirmasi Pengiriman</DialogTitle>
-                                        <DialogDescription>
-                                            Anda akan mengirim kuesioner. Setelah dikirim, jawaban tidak dapat diubah. Lanjutkan?
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <DialogFooter className="mt-4">
-                                        <Button variant="outline" onClick={() => setIsConfirmOpen(false)}>
-                                            Batal
+
+                            {currentStep < DOMAIN_ORDER.length - 1 ? (
+                                <Button onClick={handleNext} disabled={!isCurrentStepComplete || processing || isDrafting}>
+                                    Lanjut
+                                </Button>
+                            ) : (
+                                <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+                                    <DialogTrigger asChild>
+                                        <Button disabled={!isAllComplete || processing || isDrafting}>
+                                            {processing && !isDrafting ? 'Mengirim...' : 'Kirim Kuesioner'}
                                         </Button>
-                                        <Button onClick={handleSubmit} disabled={processing}>
-                                            Ya, Kirim Sekarang
-                                        </Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
-                        )}
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                        <DialogHeader>
+                                            <DialogTitle>Konfirmasi Pengiriman</DialogTitle>
+                                            <DialogDescription>
+                                                Anda akan mengirim kuesioner. Setelah dikirim, jawaban tidak dapat diubah. Lanjutkan?
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <DialogFooter className="mt-4">
+                                            <Button variant="outline" onClick={() => setIsConfirmOpen(false)} disabled={processing}>
+                                                Batal
+                                            </Button>
+                                            <Button onClick={handleSubmit} disabled={processing}>
+                                                Ya, Kirim Sekarang
+                                            </Button>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

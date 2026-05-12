@@ -48,7 +48,7 @@ export function WizardProgress({ currentPair, totalPairs, answeredSet }: WizardP
                             className={cn(
                                 'flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-all duration-200',
                                 isActive && 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 ring-offset-background',
-                                isDone && 'bg-green-500 text-white',
+                                isDone && 'bg-success text-success-foreground',
                                 isPending && 'bg-muted text-muted-foreground',
                             )}
                         >

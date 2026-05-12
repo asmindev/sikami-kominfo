@@ -80,15 +80,15 @@ A modern, production-ready boilerplate for building web applications with Larave
 Create a file in `resources/js/pages/my-page.tsx`:
 
 ```tsx
-import AdminLayout from '@/layouts/admin-layout';
+import AppLayout from '@/layouts/admin-layout';
 import { Head } from '@inertiajs/react';
 
 export default function MyPage() {
     return (
-        <AdminLayout header={<h2>My Page</h2>}>
+        <AppLayout header={<h2>My Page</h2>}>
             <Head title="My Page" />
             <div className="p-4">Content goes here</div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 ```

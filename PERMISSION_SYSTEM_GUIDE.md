@@ -161,11 +161,11 @@ export default function ReportPage() {
 
 ```tsx
 import { Can } from '@/components/can';
-import AdminLayout from '@/layouts/admin-layout';
+import AppLayout from '@/layouts/admin-layout';
 
 export default function LeaderManagementPage() {
     return (
-        <AdminLayout>
+        <AppLayout>
             <Can permission="leader.view">
                 <div className="space-y-4">
                     <h1>Data Pimpinan</h1>
@@ -180,7 +180,7 @@ export default function LeaderManagementPage() {
             <Can permission="leader.view" fallback={<AccessDenied />}>
                 <LeaderTable />
             </Can>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 ```
@@ -219,7 +219,7 @@ if (hasRole('admin')) {
 
 ## 🎯 Layout System
 
-### AdminLayout (Single Layout for All Users)
+### AppLayout (Single Layout for All Users)
 
 Satu layout yang dipakai semua authenticated users (admin & leader).
 
@@ -229,13 +229,13 @@ Navigasi ditampilkan/disembunyikan berdasarkan permission via AppSidebar:
 - Leader melihat: Hanya sections yang sesuai permission-nya
 
 ```tsx
-import AdminLayout from '@/layouts/admin-layout';
+import AppLayout from '@/layouts/admin-layout';
 
 export default function AnyPage() {
     return (
-        <AdminLayout>
+        <AppLayout>
             <h1>Konten halaman</h1>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 ```

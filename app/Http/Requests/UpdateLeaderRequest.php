@@ -17,8 +17,8 @@ class UpdateLeaderRequest extends FormRequest
         $leader = $this->route('leader');
 
         return [
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $leader->id],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$leader->id],
             'password' => ['nullable', 'string', 'min:8'],
         ];
     }
@@ -26,10 +26,10 @@ class UpdateLeaderRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required'     => 'Nama pimpinan wajib diisi.',
-            'email.required'    => 'Email pimpinan wajib diisi.',
-            'email.unique'      => 'Email tersebut sudah terdaftar.',
-            'password.min'      => 'Kata sandi minimal berisi 8 karakter.',
+            'name.required' => 'Nama pimpinan wajib diisi.',
+            'email.required' => 'Email pimpinan wajib diisi.',
+            'email.unique' => 'Email tersebut sudah terdaftar.',
+            'password.min' => 'Kata sandi minimal berisi 8 karakter.',
         ];
     }
 }

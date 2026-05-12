@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\KamiService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -21,6 +22,7 @@ class KamiController extends Controller
 
         // Cek apakah AHP sudah dihitung dan konsisten
         $ahpReady = AhpResult::where('is_consistent', true)->exists();
+        Log::info('AHP ready status: ' . ($ahpReady ? 'ready' : 'not ready'));
 
         // Semua leader yang sudah submit kuesioner
         $leaders = User::role('leader')
@@ -29,7 +31,7 @@ class KamiController extends Controller
             ->get();
 
         return Inertia::render('kami/calculate/page', [
-            'leaders'  => $leaders,
+            'leaders' => $leaders,
             'ahpReady' => $ahpReady,
         ]);
     }
@@ -39,14 +41,17 @@ class KamiController extends Controller
         $this->authorize('kami-index.calculate');
 
         $validated = $request->validate([
-            'user_id'     => ['required', 'exists:users,id'],
-            'system_type' => ['required', 'in:TINGGI,RENDAH,STRATEGIS'],
+            'user_id' => ['required', 'exists:users,id'],
+            'system_type' => ['required', 'in:tinggi,rendah,strategis'],
         ]);
 
         try {
             $user = User::findOrFail($validated['user_id']);
 
-            $this->kamiService->calculateKamiAndAhp($user, $validated['system_type']);
+            $this->kamiService->calculateKamiAndAhp(
+                $user,
+                strtoupper($validated['system_type'])
+            );
 
             return redirect()
                 ->route('kami.result')
@@ -73,9 +78,13 @@ class KamiController extends Controller
     {
         $this->authorize('kami-index.view');
 
-        $kamiIndex->load(['user:id,name,email', 'domainScores']);
+        $kamiIndex->load([
+            'user:id,name,email,nip,position_id',
+            'user.position:id,name',
+            'domainScores',
+        ]);
 
-        return Inertia::render('kami/show/page', [
+        return Inertia::render('kami/result/detail/page', [
             'kamiIndex' => $kamiIndex,
         ]);
     }

@@ -11,11 +11,11 @@ class DomainScore extends Model
     use HasFactory;
 
     protected $fillable = [
-        'kami_index_id', 
-        'domain_name', 
-        'domain_score', 
-        'ahp_weight', 
-        'final_score'
+        'kami_index_id',
+        'domain_name',
+        'domain_score',
+        'ahp_weight',
+        'final_score',
     ];
 
     public function kamiIndex(): BelongsTo

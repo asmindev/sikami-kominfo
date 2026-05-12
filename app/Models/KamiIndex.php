@@ -17,7 +17,7 @@ class KamiIndex extends Model
         'user_id',
         'total_score',
         'category',
-        'calculated_at'
+        'calculated_at',
     ];
 
     protected function casts(): array

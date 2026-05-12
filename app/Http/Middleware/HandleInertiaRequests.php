@@ -33,11 +33,11 @@ class HandleInertiaRequests extends Middleware
                 'permissions' => $request->user()?->getAllPermissions()->pluck('name') ?? [],
                 'roles' => $request->user()?->getRoleNames() ?? [],
             ],
-            'ziggy' => fn() => [
+            'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
-            'flash' => fn() => [
+            'flash' => fn () => [
                 'type' => session()->has('error')
                     ? 'error'
                     : (session()->has('success') ? 'success' : 'message'),

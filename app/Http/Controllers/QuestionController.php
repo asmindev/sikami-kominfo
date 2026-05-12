@@ -26,8 +26,7 @@ class QuestionController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('indicator', 'like', "%$search%")
                     ->orWhere('question_text', 'like', "%$search%")
-                    ->orWhere('domain', 'like', "%$search%")
-                ;
+                    ->orWhere('domain', 'like', "%$search%");
             });
         }
 

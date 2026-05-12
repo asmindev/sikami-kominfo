@@ -37,8 +37,8 @@ class LeaderController extends Controller
 
         DB::transaction(function () use ($request) {
             $user = User::create([
-                'name'     => $request->name,
-                'email'    => $request->email,
+                'name' => $request->name,
+                'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
 
@@ -65,7 +65,7 @@ class LeaderController extends Controller
         $data = $request->validated();
 
         // Only hash password if provided
-        if (!empty($data['password'])) {
+        if (! empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         } else {
             unset($data['password']);

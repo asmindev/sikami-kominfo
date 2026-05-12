@@ -15,9 +15,9 @@ class StorePairwiseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'comparisons'                    => ['required', 'array'],
-            'comparisons.*.criteria1_id'     => ['required', 'integer', 'exists:ahp_criteria,id'],
-            'comparisons.*.criteria2_id'     => ['required', 'integer', 'exists:ahp_criteria,id'],
+            'comparisons' => ['required', 'array'],
+            'comparisons.*.criteria1_id' => ['required', 'integer', 'exists:ahp_criteria,id'],
+            'comparisons.*.criteria2_id' => ['required', 'integer', 'exists:ahp_criteria,id'],
             'comparisons.*.comparison_value' => ['required', 'numeric', 'min:0.1111', 'max:9'],
         ];
     }

@@ -11,13 +11,13 @@ class AhpResult extends Model
     use HasFactory;
 
     protected $fillable = [
-        'criteria_id', 
-        'weight', 
-        'eigen_value', 
-        'ci', 
-        'cr', 
-        'lambda_max', 
-        'is_consistent'
+        'criteria_id',
+        'weight',
+        'eigen_value',
+        'ci',
+        'cr',
+        'lambda_max',
+        'is_consistent',
     ];
 
     protected function casts(): array

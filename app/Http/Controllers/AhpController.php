@@ -20,15 +20,15 @@ class AhpController extends Controller
     {
         $this->authorize('ahp-pairwise.view');
 
-        $criteria    = AhpCriteria::orderBy('order')->get();
+        $criteria = AhpCriteria::orderBy('order')->get();
         $comparisons = PairwiseComparison::all();
         // Ambil result terbaru — semua record punya CI/CR yang sama per kalkulasi
-        $lastResult  = AhpResult::latest()->first();
+        $lastResult = AhpResult::latest()->first();
 
         return Inertia::render('ahp/pairwise/page', [
-            'criteria'            => $criteria,
+            'criteria' => $criteria,
             'existingComparisons' => $comparisons,
-            'lastResult'          => $lastResult,
+            'lastResult' => $lastResult,
         ]);
     }
 
@@ -36,9 +36,9 @@ class AhpController extends Controller
     {
         $this->authorize('ahp-pairwise.create');
 
-        $comparisons  = $request->validated()['comparisons'];
-        $criteria     = AhpCriteria::orderBy('order')->get();
-        $n            = $criteria->count();
+        $comparisons = $request->validated()['comparisons'];
+        $criteria = AhpCriteria::orderBy('order')->get();
+        $n = $criteria->count();
         $criteriaOrder = $criteria->pluck('id')->toArray();
 
         // Map criteria IDs ke 0-based indices untuk matrix builder
@@ -47,11 +47,13 @@ class AhpController extends Controller
                 $i = array_search($comp['criteria1_id'], $criteriaOrder);
                 $j = array_search($comp['criteria2_id'], $criteriaOrder);
 
-                if ($i === false || $j === false) return null;
+                if ($i === false || $j === false) {
+                    return null;
+                }
 
                 return [
-                    'criteria1_index'  => $i,
-                    'criteria2_index'  => $j,
+                    'criteria1_index' => $i,
+                    'criteria2_index' => $j,
                     'comparison_value' => $comp['comparison_value'],
                 ];
             })
@@ -70,22 +72,22 @@ class AhpController extends Controller
 
             foreach ($comparisons as $comp) {
                 PairwiseComparison::create([
-                    'criteria1_id'     => $comp['criteria1_id'],
-                    'criteria2_id'     => $comp['criteria2_id'],
+                    'criteria1_id' => $comp['criteria1_id'],
+                    'criteria2_id' => $comp['criteria2_id'],
                     'comparison_value' => $comp['comparison_value'],
                 ]);
             }
 
             foreach ($criteriaOrder as $index => $criteriaId) {
                 AhpResult::create([
-                    'criteria_id'   => $criteriaId,
-                    'weight'        => $result['weights'][$index],
+                    'criteria_id' => $criteriaId,
+                    'weight' => $result['weights'][$index],
                     // eigen_value diisi λ_max — nilai sama untuk semua kriteria
                     // karena λ_max adalah properti matriks, bukan per kriteria
-                    'eigen_value'   => $result['lambdaMax'],
-                    'ci'            => $result['ci'],
-                    'cr'            => $result['cr'],
-                    'lambda_max'    => $result['lambdaMax'],
+                    'eigen_value' => $result['lambdaMax'],
+                    'ci' => $result['ci'],
+                    'cr' => $result['cr'],
+                    'lambda_max' => $result['lambdaMax'],
                     'is_consistent' => $result['isConsistent'],
                 ]);
             }
@@ -94,12 +96,12 @@ class AhpController extends Controller
         if (! $result['isConsistent']) {
             return redirect()
                 ->route('ahp.pairwise')
-                ->with('error', 'Matriks tidak konsisten (CR = ' . number_format($result['cr'], 3) . ' > 0.1). Silakan revisi perbandingan.');
+                ->with('error', 'Matriks tidak konsisten (CR = '.number_format($result['cr'], 3).' > 0.1). Silakan revisi perbandingan.');
         }
 
         return redirect()
             ->route('ahp.result')
-            ->with('success', 'Bobot AHP berhasil dihitung dan konsisten (CR = ' . number_format($result['cr'], 3) . ').');
+            ->with('success', 'Bobot AHP berhasil dihitung dan konsisten (CR = '.number_format($result['cr'], 3).').');
     }
 
     public function result(): Response
@@ -112,11 +114,11 @@ class AhpController extends Controller
         $firstResult = $results->first();
 
         return Inertia::render('ahp/result/page', [
-            'results'      => $results,
+            'results' => $results,
             'isConsistent' => $firstResult?->is_consistent ?? false,
-            'cr'           => $firstResult?->cr ?? 0,
-            'ci'           => $firstResult?->ci ?? 0,
-            'lambdaMax'    => $firstResult?->lambda_max ?? 0,
+            'cr' => $firstResult?->cr ?? 0,
+            'ci' => $firstResult?->ci ?? 0,
+            'lambdaMax' => $firstResult?->lambda_max ?? 0,
         ]);
     }
 }

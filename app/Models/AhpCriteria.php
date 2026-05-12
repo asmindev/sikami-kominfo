@@ -10,5 +10,6 @@ class AhpCriteria extends Model
     use HasFactory;
 
     protected $table = 'ahp_criteria';
+
     protected $fillable = ['name', 'code', 'order'];
 }

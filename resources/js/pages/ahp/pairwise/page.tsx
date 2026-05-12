@@ -2,55 +2,39 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import AppLayout from '@/layouts/admin-layout';
 import type { PageProps } from '@/types';
 import { Head } from '@inertiajs/react';
-import { ConsistencyAlert } from './components/consistency-alert';
-import { PairwiseMatrix } from './components/pairwise-matrix';
+import { PairwiseWizard } from './components/pairwise-wizard';
 import type { Criteria, PairwiseComparison } from './types';
-
-interface AhpResult {
-    id: number;
-    criteria_id: number;
-    weight: number;
-    eigen_value: number;
-    ci: number;
-    cr: number;
-    lambda_max: number;
-    is_consistent: boolean;
-}
 
 interface Props extends PageProps {
     criteria: Criteria[];
     existingComparisons: PairwiseComparison[];
-    lastResult: AhpResult | null;
 }
 
-export default function PairwisePage({ criteria = [], existingComparisons = [], lastResult }: Props) {
+export default function PairwisePage({ criteria = [], existingComparisons = [] }: Props) {
+    const hasExisting = existingComparisons.length > 0;
+
     return (
         <AppLayout>
             <Head title="Perbandingan Berpasangan AHP" />
             <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight">Perbandingan Berpasangan AHP</h1>
-                        <p className="text-sm text-muted-foreground">
-                            Tentukan bobot prioritas antar domain menggunakan metode Analytic Hierarchy Process (AHP).
-                        </p>
-                    </div>
+                <div className="space-y-1">
+                    <h1 className="text-2xl font-bold tracking-tight">Perbandingan Berpasangan AHP</h1>
+                    <p className="text-sm text-muted-foreground">
+                        Tentukan bobot prioritas antar domain dengan membandingkan setiap pasang domain secara langsung.
+                    </p>
                 </div>
 
-                {lastResult && (
-                    <ConsistencyAlert
-                        isConsistent={lastResult.is_consistent}
-                        cr={typeof lastResult.cr === 'string' ? parseFloat(lastResult.cr) : lastResult.cr}
-                    />
-                )}
-
                 <Card>
-                    <CardHeader>
-                        <CardTitle>Matriks Perbandingan</CardTitle>
-                        <CardDescription>Beri nilai perbandingan antara domain keamanan informasi berdasarkan skala Saaty (1-9).</CardDescription>
+                    <CardHeader className="border-b pb-4">
+                        <CardTitle className="text-base">{hasExisting ? 'Perbarui Perbandingan' : 'Mulai Perbandingan'}</CardTitle>
+                        <CardDescription>
+                            {hasExisting
+                                ? 'Jawaban sebelumnya sudah dimuat. Ubah sesuai kebutuhan lalu simpan kembali.'
+                                : 'Jawab 10 pertanyaan perbandingan berikut satu per satu menggunakan skala Saaty.'}
+                        </CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <PairwiseMatrix criteria={criteria} initialComparisons={existingComparisons} />
+                    <CardContent className="pt-6">
+                        <PairwiseWizard criteria={criteria} existingComparisons={existingComparisons} />
                     </CardContent>
                 </Card>
             </div>

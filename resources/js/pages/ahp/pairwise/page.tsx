@@ -13,7 +13,7 @@ export default function PairwisePage({ criteria = [], existingComparisons = [] }
     return (
         <AppLayout>
             <Head title="Perbandingan Berpasangan AHP" />
-            <div className="mx-auto max-w-2xl space-y-6">
+            <div className="space-y-6">
                 <div className="space-y-1">
                     <h1 className="text-2xl font-bold tracking-tight">Perbandingan Berpasangan AHP</h1>
                     <p className="text-sm text-muted-foreground">

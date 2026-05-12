@@ -1,7 +1,7 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { useForm } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import { AlertCircle, ChevronLeft, ChevronRight, Save } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { route } from 'ziggy-js';
@@ -51,17 +51,9 @@ export function PairwiseWizard({ criteria, existingComparisons }: PairwiseWizard
 
     const [currentPair, setCurrentPair] = useState(0);
     const [answers, setAnswers] = useState<Record<string, number>>(initialAnswers);
+    const [processing, setProcessing] = useState(false);
+    const [serverError, setServerError] = useState<string | null>(null);
     const autoAdvanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    const { post, processing, errors, transform } = useForm<{
-        comparisons: {
-            criteria1_id: number;
-            criteria2_id: number;
-            criteria1_index: number;
-            criteria2_index: number;
-            comparison_value: number;
-        }[];
-    }>({ comparisons: [] });
 
     // Scroll ke atas setiap pindah pair
     useEffect(() => {
@@ -125,20 +117,26 @@ export function PairwiseWizard({ criteria, existingComparisons }: PairwiseWizard
         e.preventDefault();
         if (!isAllAnswered || processing) return;
 
-        transform(() => ({
-            comparisons: pairs.map((pair) => ({
-                criteria1_id: pair.a.id,
-                criteria2_id: pair.b.id,
-                criteria1_index: pair.i,
-                criteria2_index: pair.j,
-                comparison_value: answers[`${pair.i}-${pair.j}`],
-            })),
-        }));
+        setServerError(null);
+        setProcessing(true);
 
-        post(route('ahp.store-pairwise'));
+        router.post(
+            route('ahp.store-pairwise'),
+            {
+                comparisons: pairs.map((pair) => ({
+                    criteria1_id: pair.a.id,
+                    criteria2_id: pair.b.id,
+                    criteria1_index: pair.i,
+                    criteria2_index: pair.j,
+                    comparison_value: answers[`${pair.i}-${pair.j}`],
+                })),
+            },
+            {
+                onError: (errs) => setServerError(Object.values(errs)[0] ?? 'Terjadi kesalahan.'),
+                onFinish: () => setProcessing(false),
+            },
+        );
     }
-
-    const serverError = errors.comparisons ?? (Object.values(errors)[0] as string | undefined);
 
     if (!pairs.length) {
         return (

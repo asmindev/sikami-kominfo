@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { useForm } from '@inertiajs/react';
 import { AlertCircle, ChevronLeft, ChevronRight, Save } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { route } from 'ziggy-js';
 import type { Criteria, PairwiseComparison } from '../types';
 import { PairQuestion } from './pair-question';
@@ -21,8 +21,10 @@ interface PairwiseWizardProps {
     existingComparisons: PairwiseComparison[];
 }
 
+/** Delay (ms) sebelum auto-advance ke pair berikutnya setelah memilih jawaban */
+const AUTO_ADVANCE_DELAY = 500;
+
 export function PairwiseWizard({ criteria, existingComparisons }: PairwiseWizardProps) {
-    // Generate semua pasangan upper triangle
     const pairs = useMemo<Pair[]>(() => {
         const result: Pair[] = [];
         for (let i = 0; i < criteria.length; i++) {
@@ -35,7 +37,6 @@ export function PairwiseWizard({ criteria, existingComparisons }: PairwiseWizard
 
     const totalPairs = pairs.length;
 
-    // Pre-fill dari existingComparisons jika ada
     const initialAnswers = useMemo<Record<string, number>>(() => {
         const filled: Record<string, number> = {};
         existingComparisons.forEach((cmp) => {
@@ -50,6 +51,7 @@ export function PairwiseWizard({ criteria, existingComparisons }: PairwiseWizard
 
     const [currentPair, setCurrentPair] = useState(0);
     const [answers, setAnswers] = useState<Record<string, number>>(initialAnswers);
+    const autoAdvanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const { post, processing, errors, transform } = useForm<{
         comparisons: {
@@ -66,23 +68,56 @@ export function PairwiseWizard({ criteria, existingComparisons }: PairwiseWizard
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, [currentPair]);
 
+    // Derived state
     const currentKey = `${pairs[currentPair]?.i}-${pairs[currentPair]?.j}`;
     const currentValue = answers[currentKey] ?? null;
-    const answeredCount = Object.keys(answers).length;
-    const isCurrentAnswered = currentValue !== null;
-    const isAllAnswered = answeredCount === totalPairs;
     const isFirst = currentPair === 0;
     const isLast = currentPair === totalPairs - 1;
+    const isCurrentAnswered = currentValue !== null;
+    const isAllAnswered = Object.keys(answers).length === totalPairs;
 
-    function handleAnswer(value: number): void {
-        setAnswers((prev) => ({ ...prev, [currentKey]: value }));
-    }
+    // answeredSet: set of pair indices yang sudah dijawab — untuk WizardProgress dots
+    const answeredSet = useMemo<Set<number>>(() => {
+        const set = new Set<number>();
+        pairs.forEach((pair, idx) => {
+            if (answers[`${pair.i}-${pair.j}`] !== undefined) {
+                set.add(idx);
+            }
+        });
+        return set;
+    }, [answers, pairs]);
+
+    const goNext = useCallback(() => {
+        if (!isLast) setCurrentPair((p) => p + 1);
+    }, [isLast]);
+
+    const handleAnswer = useCallback(
+        (value: number) => {
+            setAnswers((prev) => ({ ...prev, [currentKey]: value }));
+
+            // Auto-advance ke pair berikutnya jika bukan yang terakhir
+            if (!isLast) {
+                if (autoAdvanceTimer.current) clearTimeout(autoAdvanceTimer.current);
+                autoAdvanceTimer.current = setTimeout(goNext, AUTO_ADVANCE_DELAY);
+            }
+        },
+        [currentKey, isLast, goNext],
+    );
+
+    // Bersihkan timer saat unmount atau ganti pair
+    useEffect(() => {
+        return () => {
+            if (autoAdvanceTimer.current) clearTimeout(autoAdvanceTimer.current);
+        };
+    }, [currentPair]);
 
     function handlePrevious(): void {
+        if (autoAdvanceTimer.current) clearTimeout(autoAdvanceTimer.current);
         if (!isFirst) setCurrentPair((p) => p - 1);
     }
 
     function handleNext(): void {
+        if (autoAdvanceTimer.current) clearTimeout(autoAdvanceTimer.current);
         if (!isLast && isCurrentAnswered) setCurrentPair((p) => p + 1);
     }
 
@@ -115,34 +150,25 @@ export function PairwiseWizard({ criteria, existingComparisons }: PairwiseWizard
     }
 
     return (
-        <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
             {/* Progress */}
-            <WizardProgress currentPair={currentPair} totalPairs={totalPairs} answeredCount={answeredCount} />
+            <WizardProgress currentPair={currentPair} totalPairs={totalPairs} answeredSet={answeredSet} />
 
             {/* Kartu perbandingan */}
-            <Card className="shadow-sm">
+            <Card>
                 <CardContent className="pt-6">
-                    <PairQuestion
-                        pairIndex={currentPair + 1}
-                        totalPairs={totalPairs}
-                        domainA={pairs[currentPair].a}
-                        domainB={pairs[currentPair].b}
-                        value={currentValue}
-                        onChange={handleAnswer}
-                    />
+                    <PairQuestion domainA={pairs[currentPair].a} domainB={pairs[currentPair].b} value={currentValue} onChange={handleAnswer} />
                 </CardContent>
 
                 <CardFooter className="flex items-center justify-between gap-3 border-t pt-4">
-                    {/* Sebelumnya */}
                     <Button type="button" variant="outline" onClick={handlePrevious} disabled={isFirst}>
                         <ChevronLeft className="mr-1 h-4 w-4" />
                         Sebelumnya
                     </Button>
 
-                    {/* Berikutnya atau Simpan */}
                     {isLast ? (
-                        <Button type="submit" disabled={!isAllAnswered || processing} className="gap-1">
-                            <Save className="h-4 w-4" />
+                        <Button type="submit" disabled={!isAllAnswered || processing}>
+                            <Save className="mr-1.5 h-4 w-4" />
                             {processing ? 'Menyimpan...' : 'Simpan & Hitung Bobot'}
                         </Button>
                     ) : (
@@ -154,22 +180,22 @@ export function PairwiseWizard({ criteria, existingComparisons }: PairwiseWizard
                 </CardFooter>
             </Card>
 
+            {/* Peringatan jika di halaman terakhir tapi belum semua dijawab */}
+            {isLast && !isAllAnswered && (
+                <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                        Masih ada <strong>{totalPairs - Object.keys(answers).length}</strong> perbandingan yang belum diisi. Kembali dan lengkapi
+                        sebelum menyimpan.
+                    </AlertDescription>
+                </Alert>
+            )}
+
             {/* Error dari server */}
             {serverError && (
                 <Alert variant="destructive">
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>{serverError}</AlertDescription>
-                </Alert>
-            )}
-
-            {/* Hint: semua harus dijawab sebelum simpan */}
-            {isLast && !isAllAnswered && (
-                <Alert>
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                        Masih ada <strong>{totalPairs - answeredCount}</strong> perbandingan yang belum diisi. Kembali dan isi semua perbandingan
-                        sebelum menyimpan.
-                    </AlertDescription>
                 </Alert>
             )}
         </form>

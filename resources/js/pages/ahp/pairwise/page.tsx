@@ -1,4 +1,3 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/admin-layout';
 import type { PageProps } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -11,32 +10,20 @@ interface Props extends PageProps {
 }
 
 export default function PairwisePage({ criteria = [], existingComparisons = [] }: Props) {
-    const hasExisting = existingComparisons.length > 0;
-
     return (
         <AppLayout>
             <Head title="Perbandingan Berpasangan AHP" />
-            <div className="space-y-6">
+            <div className="mx-auto max-w-2xl space-y-6">
                 <div className="space-y-1">
                     <h1 className="text-2xl font-bold tracking-tight">Perbandingan Berpasangan AHP</h1>
                     <p className="text-sm text-muted-foreground">
-                        Tentukan bobot prioritas antar domain dengan membandingkan setiap pasang domain secara langsung.
+                        {existingComparisons.length > 0
+                            ? 'Jawaban sebelumnya sudah dimuat. Ubah jika diperlukan, lalu simpan kembali.'
+                            : 'Bandingkan tingkat kepentingan antar domain keamanan informasi satu per satu.'}
                     </p>
                 </div>
 
-                <Card>
-                    <CardHeader className="border-b pb-4">
-                        <CardTitle className="text-base">{hasExisting ? 'Perbarui Perbandingan' : 'Mulai Perbandingan'}</CardTitle>
-                        <CardDescription>
-                            {hasExisting
-                                ? 'Jawaban sebelumnya sudah dimuat. Ubah sesuai kebutuhan lalu simpan kembali.'
-                                : 'Jawab 10 pertanyaan perbandingan berikut satu per satu menggunakan skala Saaty.'}
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-6">
-                        <PairwiseWizard criteria={criteria} existingComparisons={existingComparisons} />
-                    </CardContent>
-                </Card>
+                <PairwiseWizard criteria={criteria} existingComparisons={existingComparisons} />
             </div>
         </AppLayout>
     );

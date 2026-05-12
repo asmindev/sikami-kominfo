@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import AdminLayout from '@/layouts/admin-layout';
+import AppLayout from '@/layouts/admin-layout';
 import type { PageProps } from '@/types';
 import { Head } from '@inertiajs/react';
 import { ConsistencyAlert } from './components/consistency-alert';
@@ -25,7 +25,7 @@ interface Props extends PageProps {
 
 export default function PairwisePage({ criteria = [], existingComparisons = [], lastResult }: Props) {
     return (
-        <AdminLayout>
+        <AppLayout>
             <Head title="Perbandingan Berpasangan AHP" />
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -54,6 +54,6 @@ export default function PairwisePage({ criteria = [], existingComparisons = [], 
                     </CardContent>
                 </Card>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }

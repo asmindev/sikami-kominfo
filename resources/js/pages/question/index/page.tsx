@@ -3,7 +3,7 @@ import PaginationNav from '@/components/pagination-nav';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import AdminLayout from '@/layouts/admin-layout';
+import AppLayout from '@/layouts/admin-layout';
 import type { PageProps, Question } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { route } from 'ziggy-js';
@@ -34,7 +34,7 @@ export default function QuestionIndexPage({ questions, domains, filter, auth }: 
     };
 
     return (
-        <AdminLayout>
+        <AppLayout>
             <Head title="Data Pertanyaan KAMI" />
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -82,6 +82,6 @@ export default function QuestionIndexPage({ questions, domains, filter, auth }: 
                     </div>
                 </div>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }

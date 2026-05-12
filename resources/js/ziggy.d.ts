@@ -9,33 +9,26 @@ declare module 'ziggy-js' {
     "password.confirmation": [],
     "password.confirm.store": [],
     "dashboard": [],
-    "employee.index": [],
-    "employee.create": [],
-    "employee.store": [],
-    "employee.show": [
+    "leader.index": [],
+    "leader.create": [],
+    "leader.store": [],
+    "leader.edit": [
         {
-            "name": "employee",
+            "name": "leader",
             "required": true,
             "binding": "id"
         }
     ],
-    "employee.edit": [
+    "leader.update": [
         {
-            "name": "employee",
+            "name": "leader",
             "required": true,
             "binding": "id"
         }
     ],
-    "employee.update": [
+    "leader.destroy": [
         {
-            "name": "employee",
-            "required": true,
-            "binding": "id"
-        }
-    ],
-    "employee.destroy": [
-        {
-            "name": "employee",
+            "name": "leader",
             "required": true,
             "binding": "id"
         }
@@ -43,12 +36,6 @@ declare module 'ziggy-js' {
     "question.index": [],
     "question.create": [],
     "question.store": [],
-    "question.show": [
-        {
-            "name": "question",
-            "required": true
-        }
-    ],
     "question.edit": [
         {
             "name": "question",

@@ -1,5 +1,5 @@
 import { Head, useForm, Link } from '@inertiajs/react';
-import AdminLayout from '@/layouts/admin-layout';
+import AppLayout from '@/layouts/admin-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -41,7 +41,7 @@ export default function QuestionCreatePage({ question, isEdit = false }: Props) 
     };
 
     return (
-        <AdminLayout>
+        <AppLayout>
             <Head title={isEdit ? 'Edit Pertanyaan' : 'Tambah Pertanyaan'} />
             <div className="space-y-6 max-w-2xl mx-auto">
                 <div className="flex items-center justify-between">
@@ -121,6 +121,6 @@ export default function QuestionCreatePage({ question, isEdit = false }: Props) 
                     </CardContent>
                 </Card>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }

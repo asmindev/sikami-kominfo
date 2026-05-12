@@ -1,7 +1,7 @@
 import { Can } from '@/components/can';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import AdminLayout from '@/layouts/admin-layout';
+import AppLayout from '@/layouts/admin-layout';
 import type { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { FileSpreadsheet } from 'lucide-react';
@@ -19,7 +19,7 @@ interface ReportPageProps extends PageProps {
 
 export default function ReportPage({ reports }: ReportPageProps) {
     return (
-        <AdminLayout>
+        <AppLayout>
             <Head title="Cetak Laporan" />
             <div className="space-y-6">
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -49,6 +49,6 @@ export default function ReportPage({ reports }: ReportPageProps) {
                     </CardContent>
                 </Card>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }

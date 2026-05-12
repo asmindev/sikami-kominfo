@@ -1,6 +1,6 @@
 import { Can } from '@/components/can';
 import { Button } from '@/components/ui/button';
-import AdminLayout from '@/layouts/admin-layout';
+import AppLayout from '@/layouts/admin-layout';
 import type { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { route } from 'ziggy-js';
@@ -17,7 +17,7 @@ interface Props extends PageProps {
 
 export default function QuestionnaireIndexPage({ questionnaires, hasActiveDraft }: Props) {
     return (
-        <AdminLayout>
+        <AppLayout>
             <Head title="Kuesioner Indeks KAMI" />
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -46,6 +46,6 @@ export default function QuestionnaireIndexPage({ questionnaires, hasActiveDraft 
                     <QuestionnaireTable questionnaires={questionnaires.data} />
                 </div>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }

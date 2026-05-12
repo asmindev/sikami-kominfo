@@ -1,7 +1,7 @@
 import { Can } from '@/components/can';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import AdminLayout from '@/layouts/admin-layout';
+import AppLayout from '@/layouts/admin-layout';
 import type { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { route } from 'ziggy-js';
@@ -30,7 +30,7 @@ interface Props extends PageProps {
 export default function AhpResultPage({ results }: Props) {
     if (!results.length) {
         return (
-            <AdminLayout>
+            <AppLayout>
                 <Head title="Hasil AHP" />
                 <div className="mx-auto w-full">
                     <Card>
@@ -45,7 +45,7 @@ export default function AhpResultPage({ results }: Props) {
                         </CardContent>
                     </Card>
                 </div>
-            </AdminLayout>
+            </AppLayout>
         );
     }
 
@@ -56,13 +56,13 @@ export default function AhpResultPage({ results }: Props) {
         <Can
             permission="ahp-result.view"
             fallback={
-                <AdminLayout>
+                <AppLayout>
                     <Head title="Tidak Diizinkan" />
                     <div className="text-center text-muted-foreground">Anda tidak memiliki akses ke halaman ini.</div>
-                </AdminLayout>
+                </AppLayout>
             }
         >
-            <AdminLayout>
+            <AppLayout>
                 <Head title="Hasil Perhitungan AHP" />
                 <div className="mx-auto w-full">
                     <div className="flex items-center justify-between">
@@ -98,7 +98,7 @@ export default function AhpResultPage({ results }: Props) {
                         </div>
                     </div>
                 </div>
-            </AdminLayout>
+            </AppLayout>
         </Can>
     );
 }

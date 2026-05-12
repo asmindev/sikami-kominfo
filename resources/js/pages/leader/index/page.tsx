@@ -1,6 +1,6 @@
 import { Can } from '@/components/can';
 import { Button } from '@/components/ui/button';
-import AdminLayout from '@/layouts/admin-layout';
+import AppLayout from '@/layouts/admin-layout';
 import type { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { route } from 'ziggy-js';
@@ -22,7 +22,7 @@ interface Props extends PageProps {
 
 export default function LeaderIndexPage({ leaders }: Props) {
     return (
-        <AdminLayout>
+        <AppLayout>
             <Head title="Data Pimpinan" />
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -35,6 +35,6 @@ export default function LeaderIndexPage({ leaders }: Props) {
                 </div>
                 <LeaderTable leaders={leaders.data} />
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }

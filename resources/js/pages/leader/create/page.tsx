@@ -1,10 +1,10 @@
-import AdminLayout from '@/layouts/admin-layout';
+import AppLayout from '@/layouts/admin-layout';
 import { Head } from '@inertiajs/react';
 import { LeaderForm } from './components/leader-form';
 
 export default function LeaderCreatePage() {
     return (
-        <AdminLayout>
+        <AppLayout>
             <Head title="Tambah Pimpinan" />
             <div className="space-y-6">
                 <div>
@@ -12,6 +12,6 @@ export default function LeaderCreatePage() {
                 </div>
                 <LeaderForm />
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }

@@ -1,4 +1,4 @@
-import AdminLayout from '@/layouts/admin-layout';
+import AppLayout from '@/layouts/admin-layout';
 import type { PageProps } from '@/types';
 import { Head } from '@inertiajs/react';
 import { LeaderForm } from './components/leader-form';
@@ -15,7 +15,7 @@ interface Props extends PageProps {
 
 export default function LeaderEditPage({ leader }: Props) {
     return (
-        <AdminLayout>
+        <AppLayout>
             <Head title="Edit Pimpinan" />
             <div className="space-y-6">
                 <div>
@@ -23,6 +23,6 @@ export default function LeaderEditPage({ leader }: Props) {
                 </div>
                 <LeaderForm leader={leader} isEdit />
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }

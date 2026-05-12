@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import AdminLayout from '@/layouts/admin-layout';
+import AppLayout from '@/layouts/admin-layout';
 import type { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { Calculator, Eye } from 'lucide-react';
@@ -33,7 +33,7 @@ const CATEGORY_CONFIG: Record<string, { label: string; variant: 'default' | 'sec
 
 export default function KamiResultPage({ kamiIndices }: Props) {
     return (
-        <AdminLayout>
+        <AppLayout>
             <Head title="Hasil Indeks KAMI" />
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -96,6 +96,6 @@ export default function KamiResultPage({ kamiIndices }: Props) {
                     </CardContent>
                 </Card>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }

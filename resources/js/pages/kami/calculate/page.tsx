@@ -1,28 +1,24 @@
-import AdminLayout from '@/layouts/admin-layout';
+import AppLayout from '@/layouts/admin-layout';
 import type { PageProps, User } from '@/types';
 import { Head } from '@inertiajs/react';
 import { CalculateForm } from './components/calculate-form';
 
 interface Props extends PageProps {
     leaders: User[];
+    ahpReady: boolean;
 }
 
-export default function CalculatePage({ leaders }: Props) {
+export default function KamiCalculatePage({ leaders, ahpReady }: Props) {
     return (
-        <AdminLayout>
-            <Head title="Hitung Indeks KAMI" />
+        <AppLayout>
+            <Head title="Kalkulasi Indeks KAMI" />
             <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight">Kalkulasi Indeks KAMI</h1>
-                        <p className="text-sm text-muted-foreground">
-                            Proses evaluasi keamanan berdasarkan jawaban kuesioner pimpinan dan bobot prioritas AHP yang telah diset.
-                        </p>
-                    </div>
+                <div className="space-y-1">
+                    <h1 className="text-2xl font-bold tracking-tight">Kalkulasi Indeks KAMI</h1>
+                    <p className="text-sm text-muted-foreground">Hitung indeks KAMI berdasarkan jawaban kuesioner pimpinan dan bobot AHP.</p>
                 </div>
-
-                <CalculateForm leaders={leaders} />
+                <CalculateForm leaders={leaders} ahpReady={ahpReady} />
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }

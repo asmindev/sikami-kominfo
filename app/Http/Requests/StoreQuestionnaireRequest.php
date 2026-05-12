@@ -26,9 +26,9 @@ class StoreQuestionnaireRequest extends FormRequest
         return [
             'answers.required' => 'Jawaban wajib diisi.',
             'answers.*.question_id.*' => 'Pertanyaan tidak valid.',
-            'answers.*.score.required' => 'Skor jawaban wajib diisi mulai dari 1 sampai 5.',
-            'answers.*.score.min' => 'Skor jawaban minimal adalah 1.',
-            'answers.*.score.max' => 'Skor jawaban maksimal adalah 5.',
+            'answers.*.score.required' => 'Skor jawaban wajib diisi (1 = Tidak Ada s/d 5 = Dikelola & Diukur).',
+            'answers.*.score.min' => 'Skor jawaban minimal adalah 1 (Tidak Ada).',
+            'answers.*.score.max' => 'Skor jawaban maksimal adalah 5 (Dikelola & Diukur).',
         ];
     }
 }

@@ -93,7 +93,7 @@ class KamiService
         $questionnaire = Questionnaire::where('user_id', $user->id)
             ->whereNotNull('submitted_at')
             ->latest()
-            ->firstOrFail();
+            ->first();
 
         if (! $questionnaire) {
             throw new \RuntimeException('Pimpinan belum mengisi atau mengirim kuesioner.');
@@ -108,8 +108,8 @@ class KamiService
             throw new \RuntimeException('Bobot AHP belum dihitung atau belum konsisten (CR > 0.1).');
         }
 
-        // 3. Hapus hasil lama jika ada — satu leader satu hasil aktif
-        KamiIndex::where('user_id', $user->id)->latest()->first()?->delete();
+        // 3. Hapus semua hasil lama jika ada — satu leader satu hasil aktif
+        KamiIndex::where('user_id', $user->id)->delete();
 
         // 4. Ambil semua jawaban beserta data pertanyaan (domain, maturity_level, score_weight)
         $answers = Answer::where('questionnaire_id', $questionnaire->id)

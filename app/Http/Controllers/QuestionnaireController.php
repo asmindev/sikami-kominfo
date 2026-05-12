@@ -21,8 +21,8 @@ class QuestionnaireController extends Controller
 
         /** @var User $user */
         $user = Auth::user();
-        // if roles admin
-        if ($user->hasRole('admin')) {
+        // Admin yang bisa lihat semua user → redirect ke halaman hasil semua kuesioner
+        if ($user->can('user.view')) {
             $questionnaires = Questionnaire::with(['user.position'])
                 ->withCount('answers')
                 ->whereNotNull('submitted_at')
@@ -80,7 +80,7 @@ class QuestionnaireController extends Controller
         $request->validate([
             'answers' => ['nullable', 'array'],
             'answers.*.question_id' => ['required', 'integer', 'exists:questions,id'],
-            'answers.*.score' => ['nullable', 'integer', 'min:1', 'max:5'],
+            'answers.*.score' => ['nullable', 'integer', 'min:0', 'max:3'],
         ]);
 
         DB::transaction(function () use ($request) {
@@ -103,7 +103,7 @@ class QuestionnaireController extends Controller
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
-                }, array_filter($request->answers, fn($a) => ! is_null($a['score'] ?? null)));
+                }, array_filter($request->answers, fn ($a) => ! is_null($a['score'] ?? null)));
 
                 if (! empty($answersData)) {
                     Answer::insert($answersData);
@@ -181,7 +181,7 @@ class QuestionnaireController extends Controller
                 ->latest()
                 ->first();
         }
-        if (!$kamiIndex) {
+        if (! $kamiIndex) {
             return redirect()->route('questionnaire.index')
                 ->with('message', 'Hasil evaluasi Indeks KAMI belum tersedia. Silakan hubungi admin untuk informasi lebih lanjut.');
         }

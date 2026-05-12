@@ -9,5 +9,5 @@ class Question extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['domain', 'indicator', 'question_text', 'order'];
+    protected $fillable = ['domain', 'indicator', 'maturity_level', 'score_weight', 'question_text', 'order'];
 }

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Answer;
+use App\Models\KamiIndex;
 use App\Models\Question;
 use App\Models\Questionnaire;
 use App\Models\User;
@@ -40,7 +41,9 @@ class QuestionnaireSeeder extends Seeder
 {
     /** Mode seeder */
     public const MODE_BASELINE = 'baseline';
+
     public const MODE_IMPROVED = 'improved';
+
     public const MODE_EXCELLENT = 'excellent';
 
     /** Mode aktif — bisa diubah via env variable MODE */
@@ -95,7 +98,9 @@ class QuestionnaireSeeder extends Seeder
         $this->command?->info("Mode seeder: {$this->mode}");
         $this->command?->info("Membuat kuesioner untuk leader: {$leader->name} ({$leader->email})");
 
-        // Hapus kuesioner lama jika ada — idempotent
+        // Hapus kuesioner lama dan KamiIndex terkait — idempotent
+        // KamiIndex harus dihapus juga agar tidak stale saat questionnaire diganti
+        KamiIndex::where('user_id', $leader->id)->delete();
         Questionnaire::where('user_id', $leader->id)->delete();
 
         $questionnaire = Questionnaire::create([
@@ -143,10 +148,10 @@ class QuestionnaireSeeder extends Seeder
                 : 0;
 
             // Hitung skor mentah per level
-            $l1Raw = array_sum(array_map(fn($s) => $s * 3, $level1Scores));
-            $l2Raw = array_sum(array_map(fn($s) => $s * 6, $level2Scores));
+            $l1Raw = array_sum(array_map(fn ($s) => $s * 3, $level1Scores));
+            $l2Raw = array_sum(array_map(fn ($s) => $s * 6, $level2Scores));
             $l3Raw = $eligible
-                ? array_sum(array_map(fn($s) => $s * 9, $level3Scores))
+                ? array_sum(array_map(fn ($s) => $s * 9, $level3Scores))
                 : 0;
             $domainRaw = $l1Raw + $l2Raw + $l3Raw;
 
@@ -188,8 +193,8 @@ class QuestionnaireSeeder extends Seeder
 
         $this->command?->info('');
         $this->command?->info("✅ Kuesioner berhasil dibuat untuk: {$leader->name}");
-        $this->command?->info('   Total jawaban: ' . count($answers));
-        $this->command?->info('   Status: Submitted (' . now()->format('d M Y H:i') . ')');
+        $this->command?->info('   Total jawaban: '.count($answers));
+        $this->command?->info('   Status: Submitted ('.now()->format('d M Y H:i').')');
         $this->command?->info(sprintf('   Estimasi Indeks KAMI: %.2f (%s)', $estimatedTotal, $category));
         $this->command?->info('');
         $this->command?->info('   Catatan: Untuk hasil akurat, jalankan perhitungan via /kami/calculate');
@@ -225,7 +230,7 @@ class QuestionnaireSeeder extends Seeder
             }
         }
 
-        $partialCount = count(array_filter($level1Scores, fn($s) => $s === 2));
+        $partialCount = count(array_filter($level1Scores, fn ($s) => $s === 2));
 
         return $partialCount <= 2;
     }

@@ -1,9 +1,13 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-return new class extends Migration {
-    public function up(): void {
+
+return new class extends Migration
+{
+    public function up(): void
+    {
         Schema::create('pairwise_comparisons', function (Blueprint $table) {
             $table->id();
             $table->foreignId('criteria1_id')->constrained('ahp_criteria')->cascadeOnDelete();
@@ -12,5 +16,9 @@ return new class extends Migration {
             $table->timestamps();
         });
     }
-    public function down(): void { Schema::dropIfExists('pairwise_comparisons'); }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('pairwise_comparisons');
+    }
 };

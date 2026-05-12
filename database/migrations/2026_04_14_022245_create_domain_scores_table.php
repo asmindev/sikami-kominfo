@@ -1,9 +1,13 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-return new class extends Migration {
-    public function up(): void {
+
+return new class extends Migration
+{
+    public function up(): void
+    {
         Schema::create('domain_scores', function (Blueprint $table) {
             $table->id();
             $table->foreignId('kami_index_id')->constrained('kami_indexes')->cascadeOnDelete();
@@ -14,5 +18,9 @@ return new class extends Migration {
             $table->timestamps();
         });
     }
-    public function down(): void { Schema::dropIfExists('domain_scores'); }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('domain_scores');
+    }
 };

@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Answer;
 use App\Models\AhpResult;
+use App\Models\Answer;
 use App\Models\DomainScore;
 use App\Models\KamiIndex;
 use App\Models\Questionnaire;
@@ -28,8 +28,8 @@ class KamiService
      * Jika total_score > batas ke-3 maka kategori = 'good'
      */
     private array $thresholds = [
-        'RENDAH'    => [247, 443, 760],
-        'TINGGI'    => [387, 646, 828],
+        'RENDAH' => [247, 443, 760],
+        'TINGGI' => [387, 646, 828],
         'STRATEGIS' => [472, 760, 864],
     ];
 
@@ -38,9 +38,15 @@ class KamiService
         $limits = $this->thresholds[strtoupper($systemType)]
             ?? $this->thresholds['TINGGI'];
 
-        if ($totalScore <= $limits[0]) return 'not_eligible';
-        if ($totalScore <= $limits[1]) return 'basic_framework';
-        if ($totalScore <= $limits[2]) return 'good_enough';
+        if ($totalScore <= $limits[0]) {
+            return 'not_eligible';
+        }
+        if ($totalScore <= $limits[1]) {
+            return 'basic_framework';
+        }
+        if ($totalScore <= $limits[2]) {
+            return 'good_enough';
+        }
 
         return 'good';
     }
@@ -59,11 +65,13 @@ class KamiService
     {
         foreach ($level1Scores as $score) {
             // Jawaban 0 atau 1 langsung mendiskualifikasi Level 3
-            if ($score < 2) return false;
+            if ($score < 2) {
+                return false;
+            }
         }
 
         // Hitung berapa yang hanya "Diterapkan Sebagian" (score = 2)
-        $partialCount = count(array_filter($level1Scores, fn($s) => $s === 2));
+        $partialCount = count(array_filter($level1Scores, fn ($s) => $s === 2));
 
         // Toleransi: maksimal 2 jawaban sebagian
         return $partialCount <= 2;
@@ -109,25 +117,25 @@ class KamiService
             ->get();
 
         // 5. Hitung skor per domain
-        $totalScore      = 0.0;
+        $totalScore = 0.0;
         $domainScoresData = [];
 
         foreach ($ahpResults as $result) {
             $domainCode = $result->criteria->code; // contoh: 'governance'
-            $ahpWeight  = (float) $result->weight;
+            $ahpWeight = (float) $result->weight;
 
             // Filter jawaban untuk domain ini
             $domainAnswers = $answers->filter(
-                fn($a) => $a->question->domain === $domainCode
+                fn ($a) => $a->question->domain === $domainCode
             );
 
             // Pisahkan berdasarkan maturity_level
-            $level1 = $domainAnswers->filter(fn($a) => $a->question->maturity_level === 1);
-            $level2 = $domainAnswers->filter(fn($a) => $a->question->maturity_level === 2);
-            $level3 = $domainAnswers->filter(fn($a) => $a->question->maturity_level === 3);
+            $level1 = $domainAnswers->filter(fn ($a) => $a->question->maturity_level === 1);
+            $level2 = $domainAnswers->filter(fn ($a) => $a->question->maturity_level === 2);
+            $level3 = $domainAnswers->filter(fn ($a) => $a->question->maturity_level === 3);
 
             // Cek eligibilitas Level 3 berdasarkan jawaban Level 1
-            $level1Scores   = $level1->pluck('score')->toArray();
+            $level1Scores = $level1->pluck('score')->toArray();
             $level3Eligible = $this->isLevel3Eligible($level1Scores);
 
             // Hitung skor aktual: score (0-3) × score_weight (3/6/9)
@@ -144,22 +152,22 @@ class KamiService
                 }
             }
 
-            $finalScore  = $domainScore * $ahpWeight;
+            $finalScore = $domainScore * $ahpWeight;
             $totalScore += $finalScore;
 
             $domainScoresData[] = [
-                'domain_name'  => $result->criteria->name,
+                'domain_name' => $result->criteria->name,
                 'domain_score' => $domainScore,
-                'ahp_weight'   => $ahpWeight,
-                'final_score'  => $finalScore,
+                'ahp_weight' => $ahpWeight,
+                'final_score' => $finalScore,
             ];
         }
 
         // 6. Simpan hasil ke database
         $kamiIndex = KamiIndex::create([
-            'user_id'       => $user->id,
-            'total_score'   => $totalScore,
-            'category'      => $this->getCategory($totalScore, $systemType),
+            'user_id' => $user->id,
+            'total_score' => $totalScore,
+            'category' => $this->getCategory($totalScore, $systemType),
             'calculated_at' => now()->toDateString(),
         ]);
 

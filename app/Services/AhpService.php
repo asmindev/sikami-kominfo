@@ -60,29 +60,29 @@ class AhpService
         $cr = $ir > 0 ? $ci / $ir : 0.0;
 
         return [
-            'weights'      => $weights,
-            'lambdaMax'    => $lambdaMax,
-            'ci'           => $ci,
-            'cr'           => $cr,
-            'ir'           => $ir,
+            'weights' => $weights,
+            'lambdaMax' => $lambdaMax,
+            'ci' => $ci,
+            'cr' => $cr,
+            'ir' => $ir,
             'isConsistent' => $cr <= 0.1,
-            'n'            => $n,
+            'n' => $n,
         ];
     }
 
     public function buildMatrix(array $comparisons, int $n): array
     {
         $matrix = array_fill(0, $n, array_fill(0, $n, 1.0));
-        
+
         foreach ($comparisons as $comparison) {
             $i = $comparison['criteria1_index'];
             $j = $comparison['criteria2_index'];
             $value = (float) $comparison['comparison_value'];
-            
+
             $matrix[$i][$j] = $value;
             $matrix[$j][$i] = $value > 0 ? (1 / $value) : 1;
         }
-        
+
         return $matrix;
     }
 }

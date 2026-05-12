@@ -35,7 +35,7 @@ class UserSeeder extends Seeder
                 [
                     'name' => "Pimpinan SIKAMI {$i}",
                     'password' => Hash::make('password'),
-                    'nip' => '1980001' . $i,
+                    'nip' => '1980001'.$i,
                     'position_id' => $positions['Kepala Dinas']->id ?? null,
                 ]
             );
@@ -49,7 +49,7 @@ class UserSeeder extends Seeder
                 [
                     'name' => "Pegawai SIKAMI {$i}",
                     'password' => Hash::make('password'),
-                    'nip' => '1977001' . $i,
+                    'nip' => '1977001'.$i,
                     'position_id' => $positions['Staf']->id ?? null,
                 ]
             );

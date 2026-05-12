@@ -17,7 +17,7 @@ class StoreQuestionnaireRequest extends FormRequest
         return [
             'answers' => ['required', 'array'],
             'answers.*.question_id' => ['required', 'integer', 'exists:questions,id'],
-            'answers.*.score' => ['required', 'integer', 'min:1', 'max:5'],
+            'answers.*.score' => ['required', 'integer', 'in:0,1,2,3'],
         ];
     }
 
@@ -26,9 +26,8 @@ class StoreQuestionnaireRequest extends FormRequest
         return [
             'answers.required' => 'Jawaban wajib diisi.',
             'answers.*.question_id.*' => 'Pertanyaan tidak valid.',
-            'answers.*.score.required' => 'Skor jawaban wajib diisi (1 = Tidak Ada s/d 5 = Dikelola & Diukur).',
-            'answers.*.score.min' => 'Skor jawaban minimal adalah 1 (Tidak Ada).',
-            'answers.*.score.max' => 'Skor jawaban maksimal adalah 5 (Dikelola & Diukur).',
+            'answers.*.score.required' => 'Skor jawaban wajib diisi (0 = Tidak Dilakukan s/d 3 = Diterapkan Menyeluruh).',
+            'answers.*.score.in' => 'Skor jawaban harus salah satu dari: 0, 1, 2, atau 3.',
         ];
     }
 }

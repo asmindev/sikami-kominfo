@@ -147,11 +147,13 @@ class QuestionnaireSeeder extends Seeder
                 ? round(array_sum($level1Scores) / count($level1Scores), 2)
                 : 0;
 
-            // Hitung skor mentah per level
-            $l1Raw = array_sum(array_map(fn ($s) => $s * 3, $level1Scores));
-            $l2Raw = array_sum(array_map(fn ($s) => $s * 6, $level2Scores));
+            // Hitung skor mentah per level menggunakan matriks skor BSSN
+            // scoreMatrix[score][level-1]: level1=col0, level2=col1, level3=col2
+            $scoreMatrix = [0 => [0, 0, 0], 1 => [1, 2, 3], 2 => [2, 4, 6], 3 => [3, 6, 9]];
+            $l1Raw = array_sum(array_map(fn ($s) => $scoreMatrix[$s][0], $level1Scores));
+            $l2Raw = array_sum(array_map(fn ($s) => $scoreMatrix[$s][1], $level2Scores));
             $l3Raw = $eligible
-                ? array_sum(array_map(fn ($s) => $s * 9, $level3Scores))
+                ? array_sum(array_map(fn ($s) => $scoreMatrix[$s][2], $level3Scores))
                 : 0;
             $domainRaw = $l1Raw + $l2Raw + $l3Raw;
 
@@ -175,18 +177,12 @@ class QuestionnaireSeeder extends Seeder
 
         Answer::insert($answers);
 
-        // Hitung total KAMI (estimasi)
-        $ahpWeights = [
-            'governance' => 0.372350,
-            'risk_management' => 0.283290,
-            'framework' => 0.178158,
-            'asset_management' => 0.106040,
-            'technology' => 0.060162,
-        ];
-
+        // Estimasi total KAMI = raw sum domain scores (tanpa AHP)
+        // Konsisten dengan KamiService::calculateKamiAndAhp() yang pakai raw sum
+        // agar threshold BSSN [387/646/828] bisa diterapkan dengan benar
         $estimatedTotal = 0;
-        foreach ($domainStats as $domain => $stats) {
-            $estimatedTotal += $stats['domain_raw'] * ($ahpWeights[$domain] ?? 0);
+        foreach ($domainStats as $stats) {
+            $estimatedTotal += $stats['domain_raw'];
         }
 
         $category = $this->estimateCategory($estimatedTotal);
@@ -236,17 +232,18 @@ class QuestionnaireSeeder extends Seeder
     }
 
     /**
-     * Estimasi kategori berdasarkan threshold sistem TINGGI.
+     * Estimasi kategori berdasarkan threshold sistem TINGGI (max 825).
+     * Konsisten dengan KamiService::$thresholds['TINGGI'] = [348, 580, 743].
      */
     private function estimateCategory(float $totalScore): string
     {
-        if ($totalScore <= 387) {
+        if ($totalScore <= 348) {
             return 'Tidak Layak';
         }
-        if ($totalScore <= 646) {
+        if ($totalScore <= 580) {
             return 'Kerangka Dasar';
         }
-        if ($totalScore <= 828) {
+        if ($totalScore <= 743) {
             return 'Cukup Baik';
         }
 

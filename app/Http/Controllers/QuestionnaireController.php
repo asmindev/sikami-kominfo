@@ -80,7 +80,7 @@ class QuestionnaireController extends Controller
         $request->validate([
             'answers' => ['nullable', 'array'],
             'answers.*.question_id' => ['required', 'integer', 'exists:questions,id'],
-            'answers.*.score' => ['nullable', 'integer', 'min:0', 'max:3'],
+            'answers.*.score' => ['nullable', 'integer', 'in:0,1,2,3'],
         ]);
 
         DB::transaction(function () use ($request) {

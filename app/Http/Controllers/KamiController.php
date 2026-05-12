@@ -22,11 +22,11 @@ class KamiController extends Controller
 
         // Cek apakah AHP sudah dihitung dan konsisten
         $ahpReady = AhpResult::where('is_consistent', true)->exists();
-        Log::info('AHP ready status: ' . ($ahpReady ? 'ready' : 'not ready'));
+        Log::info('AHP ready status: '.($ahpReady ? 'ready' : 'not ready'));
 
         // Semua leader yang sudah submit kuesioner
         $leaders = User::role('leader')
-            ->whereHas('questionnaires', fn($q) => $q->whereNotNull('submitted_at'))
+            ->whereHas('questionnaires', fn ($q) => $q->whereNotNull('submitted_at'))
             ->select('id', 'name', 'email')
             ->get();
 
@@ -42,16 +42,12 @@ class KamiController extends Controller
 
         $validated = $request->validate([
             'user_id' => ['required', 'exists:users,id'],
-            'system_type' => ['required', 'in:tinggi,rendah,strategis'],
         ]);
 
         try {
             $user = User::findOrFail($validated['user_id']);
 
-            $this->kamiService->calculateKamiAndAhp(
-                $user,
-                strtoupper($validated['system_type'])
-            );
+            $this->kamiService->calculateKamiAndAhp($user);
 
             return redirect()
                 ->route('kami.result')

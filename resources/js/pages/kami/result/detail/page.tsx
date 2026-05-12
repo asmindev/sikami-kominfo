@@ -160,15 +160,15 @@ export default function KamiShowPage({ kamiIndex }: Props) {
                         </CardHeader>
                         <CardContent className="flex flex-col items-center justify-center gap-2 pt-4">
                             <span className={`font-mono text-5xl font-black ${config.color}`}>{Number(kamiIndex.total_score).toFixed(2)}</span>
-                            <span className="text-xs text-muted-foreground">dari maks. 916</span>
+                            <span className="text-xs text-muted-foreground">dari maks. 825</span>
                             <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
                                 <div
                                     className="h-full rounded-full bg-primary transition-all"
-                                    style={{ width: `${Math.min((Number(kamiIndex.total_score) / 916) * 100, 100)}%` }}
+                                    style={{ width: `${Math.min((Number(kamiIndex.total_score) / 825) * 100, 100)}%` }}
                                 />
                             </div>
                             <span className="text-xs text-muted-foreground">
-                                {((Number(kamiIndex.total_score) / 916) * 100).toFixed(1)}% dari nilai maksimum
+                                {((Number(kamiIndex.total_score) / 825) * 100).toFixed(1)}% dari nilai maksimum
                             </span>
                         </CardContent>
                     </Card>

@@ -12,7 +12,7 @@ interface QuestionCardProps {
 const SCALE_LABELS: Record<number, string> = {
     0: 'Tidak Dilakukan',
     1: 'Dalam Perencanaan',
-    2: 'Diterapkan Sebagian',
+    2: 'Dalam Penerapan / Diterapkan Sebagian',
     3: 'Diterapkan Menyeluruh',
 };
 

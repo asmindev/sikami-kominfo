@@ -41,27 +41,13 @@ export function PairwiseMatrix({ criteria = [], initialComparisons = [] }: Pairw
     initialComparisons.forEach((cmp) => {
         const idx1 = criteria.findIndex((c) => c.id === cmp.criteria1_id);
         const idx2 = criteria.findIndex((c) => c.id === cmp.criteria2_id);
-        if (idx1 !== -1 && idx2 !== -1) {
+        if (idx1 !== -1 && idx2 !== -1 && idx1 < idx2) {
+            // ← hanya segitiga atas
             const val = Number(cmp.comparison_value);
-
-            // Only set if it's in upper triangle (i < j) and value >= 1
-            if (idx1 < idx2 && val >= 1) {
-                // Find closest scale from 1-9
-                let closestScale = val;
-                let minDiff = Infinity;
-                for (const scale of scales) {
-                    if (Math.abs(scale - val) < minDiff) {
-                        minDiff = Math.abs(scale - val);
-                        closestScale = scale;
-                    }
-                }
-                defaultMatrix[idx1][idx2] = closestScale;
-                defaultMatrix[idx2][idx1] = 1 / closestScale;
-            }
-            // If value < 1 (reciprocal), skip - it will be calculated automatically
+            defaultMatrix[idx1][idx2] = val;
+            defaultMatrix[idx2][idx1] = 1 / val; // reciprocal otomatis
         }
     });
-
     const [matrix, setMatrix] = useState<number[][]>(defaultMatrix);
 
     const { post, processing, errors, transform } = useForm({
@@ -96,16 +82,15 @@ export function PairwiseMatrix({ criteria = [], initialComparisons = [] }: Pairw
         }> = [];
 
         for (let i = 0; i < n; i++) {
-            for (let j = 0; j < n; j++) {
-                if (i !== j) {
-                    comparisonsToSubmit.push({
-                        criteria1_id: criteria[i].id,
-                        criteria2_id: criteria[j].id,
-                        criteria1_index: i,
-                        criteria2_index: j,
-                        comparison_value: matrix[i][j],
-                    });
-                }
+            for (let j = i + 1; j < n; j++) {
+                // ← j mulai dari i+1, bukan 0
+                comparisonsToSubmit.push({
+                    criteria1_id: criteria[i].id,
+                    criteria2_id: criteria[j].id,
+                    criteria1_index: i,
+                    criteria2_index: j,
+                    comparison_value: matrix[i][j], // ← selalu >= 1
+                });
             }
         }
 

@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import type { User } from '@/types';
 import { Link, useForm } from '@inertiajs/react';
@@ -23,7 +22,6 @@ export function CalculateForm({ leaders, ahpReady }: Props) {
 
     const { data, setData, post, processing, errors } = useForm({
         user_id: '',
-        system_type: 'tinggi',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -104,22 +102,6 @@ export function CalculateForm({ leaders, ahpReady }: Props) {
                                     </PopoverContent>
                                 </Popover>
                                 {errors.user_id && <p className="text-sm text-red-600">{errors.user_id}</p>}
-                            </div>
-
-                            {/* Kategori Sistem Elektronik */}
-                            <div className="space-y-2">
-                                <Label>Kategori Sistem Elektronik</Label>
-                                <Select value={data.system_type} onValueChange={(val) => setData('system_type', val)} disabled={!ahpReady}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Pilih Kategori Sistem" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="tinggi">Tinggi (Skor SE: 16–34)</SelectItem>
-                                        <SelectItem value="rendah">Rendah (Skor SE: 10–15)</SelectItem>
-                                        <SelectItem value="strategis">Strategis (Skor SE: 35–50)</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                {errors.system_type && <p className="text-sm text-red-600">{errors.system_type}</p>}
                             </div>
 
                             <Button type="submit" disabled={processing || !data.user_id || !ahpReady} className="w-full">

@@ -18,8 +18,9 @@ class KamiService
      *   2 = Diterapkan Sebagian
      *   3 = Diterapkan Menyeluruh
      *
-     * Skor aktual per pertanyaan = score × score_weight (dari tabel questions)
-     * Contoh: jawaban 3 pada Level 2 (weight=6) → actual = 3 × 6 = 18
+     * Skor aktual per pertanyaan ditentukan dari matriks skor BSSN:
+     *   scoreMatrix[jawaban][maturity_level - 1]
+     *   Contoh: jawaban 3 pada Level 2 → scoreMatrix[3][1] = 6
      */
 
     /**
@@ -27,10 +28,27 @@ class KamiService
      * Setiap tipe sistem elektronik punya 3 batas: [not_eligible, basic_framework, good_enough]
      * Jika total_score > batas ke-3 maka kategori = 'good'
      */
+    /**
+     * Matriks skor resmi BSSN Indeks KAMI 5.0.
+     * Indeks: [score_jawaban][maturity_level - 1]
+     *   score = 0-3, maturity_level = 1/2/3
+     */
+    private array $scoreMatrix = [
+        0 => [0, 0, 0],  // Tidak Dilakukan
+        1 => [1, 2, 3],  // Dalam Perencanaan
+        2 => [2, 4, 6],  // Dalam Penerapan / Diterapkan Sebagian
+        3 => [3, 6, 9],  // Diterapkan Menyeluruh
+    ];
+
+    /**
+     * Threshold kategori KAMI berdasarkan Tabel 2.1 skripsi, disesuaikan ke skor maks 825.
+     * Format: [not_eligible, basic_framework, good_enough]
+     * Jika total_score > batas ke-3 maka kategori = 'good'
+     */
     private array $thresholds = [
-        'RENDAH' => [247, 443, 760],
-        'TINGGI' => [387, 646, 828],
-        'STRATEGIS' => [472, 760, 864],
+        'RENDAH' => [222, 397, 683],
+        'TINGGI' => [348, 580, 743],
+        'STRATEGIS' => [424, 682, 776],
     ];
 
     public function getCategory(float $totalScore, string $systemType = 'TINGGI'): string
@@ -82,12 +100,14 @@ class KamiService
      * dan bobot AHP yang sudah tersimpan.
      *
      * Formula per domain:
-     *   domain_score = Σ (score × score_weight) untuk semua jawaban yang eligible
-     *   final_score  = domain_score × ahp_weight
+     *   domain_score = Σ scoreMatrix[jawaban][maturity_level - 1] untuk semua jawaban eligible
+     *   final_score  = domain_score × ahp_weight  ← untuk analisis kontribusi AHP per domain
      *
-     * Total Indeks KAMI = Σ final_score semua domain
+     * Total Indeks KAMI = Σ domain_score (raw, tanpa bobot AHP)
+     *   → Konsisten dengan threshold Tabel 2.1 BSSN yang dirancang untuk raw sum.
+     *   → Max raw sum (semua skor = 3, semua L3 eligible) ≈ 825 ≈ batas atas threshold (828).
      */
-    public function calculateKamiAndAhp(User $user, string $systemType): KamiIndex
+    public function calculateKamiAndAhp(User $user, string $systemType = 'TINGGI'): KamiIndex
     {
         // 1. Pastikan kuesioner sudah di-submit
         $questionnaire = Questionnaire::where('user_id', $user->id)
@@ -117,6 +137,8 @@ class KamiService
             ->get();
 
         // 5. Hitung skor per domain
+        // total_score = raw sum (tanpa AHP) → cocok dengan threshold BSSN
+        // final_score = domain_score × ahp_weight → untuk analisis kontribusi per domain
         $totalScore = 0.0;
         $domainScoresData = [];
 
@@ -138,22 +160,23 @@ class KamiService
             $level1Scores = $level1->pluck('score')->toArray();
             $level3Eligible = $this->isLevel3Eligible($level1Scores);
 
-            // Hitung skor aktual: score (0-3) × score_weight (3/6/9)
+            // Hitung skor aktual menggunakan matriks skor resmi BSSN
+            // actual_score = scoreMatrix[jawaban][maturity_level - 1]
             $domainScore = 0.0;
             foreach ($level1 as $answer) {
-                $domainScore += $answer->score * $answer->question->score_weight;
+                $domainScore += $this->scoreMatrix[$answer->score][0]; // level 1
             }
             foreach ($level2 as $answer) {
-                $domainScore += $answer->score * $answer->question->score_weight;
+                $domainScore += $this->scoreMatrix[$answer->score][1]; // level 2
             }
             if ($level3Eligible) {
                 foreach ($level3 as $answer) {
-                    $domainScore += $answer->score * $answer->question->score_weight;
+                    $domainScore += $this->scoreMatrix[$answer->score][2]; // level 3
                 }
             }
 
             $finalScore = $domainScore * $ahpWeight;
-            $totalScore += $finalScore;
+            $totalScore += $domainScore; // raw sum untuk perbandingan dengan threshold BSSN
 
             $domainScoresData[] = [
                 'domain_name' => $result->criteria->name,

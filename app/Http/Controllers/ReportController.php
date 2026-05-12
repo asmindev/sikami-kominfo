@@ -34,11 +34,13 @@ class ReportController extends Controller
     {
         $this->authorize('report.export');
 
-        $kamiIndex->load(['user', 'domainScores']);
+        $kamiIndex->load(['user.position', 'domainScores']);
 
-        // Asumsi menggunakan barryvdh/laravel-dompdf yang akan diinstal kemudian.
-        // Simulasi PDF export for now:
-        abort(501, 'PDF Export belum diimplementasikan (membutuhkan package dompdf).');
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.kami-index-pdf', [
+            'kamiIndex' => $kamiIndex,
+        ]);
+
+        return $pdf->download('Laporan-Indeks-KAMI-'.\Str::slug($kamiIndex->user->name).'.pdf');
     }
 
     public function exportExcel()

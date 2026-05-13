@@ -129,12 +129,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
                             <Link href={route('dashboard')}>
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                                    <Shield className="size-4" />
+                                <div className="flex aspect-square size-10 items-center justify-center rounded-lg border p-0.5">
+                                    <img src="/logo.png" alt="Kominfo Sultra" className="size-full object-cover" />
                                 </div>
                                 <div className="flex flex-col gap-0.5 leading-none">
                                     <span className="font-bold tracking-wide">SIKAMI-AHP</span>
-                                    <span className="text-xs">Indeks KAMI 5.0</span>
+                                    <span className="text-xs">Kominfo Sultra</span>
                                 </div>
                             </Link>
                         </SidebarMenuButton>

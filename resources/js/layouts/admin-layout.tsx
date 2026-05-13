@@ -25,10 +25,16 @@ export default function AppLayout({ children, header }: AppLayoutProps) {
         <SidebarProvider>
             <AppSidebar />
             <SidebarInset className="relative flex min-w-0 flex-col">
-                <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b px-4 backdrop-blur supports-backdrop-filter:bg-background/20">
+                <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-3 border-b px-4 backdrop-blur supports-backdrop-filter:bg-background/20">
                     <SidebarTrigger className="-ml-1" />
                     {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
-                    <h1 className="font-black">SIKAMI</h1>
+                    <div className="flex items-center gap-2">
+                        <img src="/logo.png" alt="Kominfo Sultra" className="h-8 w-8 rounded object-cover" />
+                        <div className="flex flex-col leading-none">
+                            <span className="text-sm font-bold">SIKAMI-AHP</span>
+                            <span className="text-xs text-muted-foreground">Kominfo Sultra</span>
+                        </div>
+                    </div>
                     {header && <div className="ml-auto">{header}</div>}
                 </header>
 

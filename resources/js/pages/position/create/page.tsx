@@ -1,7 +1,7 @@
-import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/admin-layout';
-import { PositionForm } from './components/position-form';
+import { Head } from '@inertiajs/react';
 import { route } from 'ziggy-js';
+import { PositionForm } from './components/position-form';
 
 export default function PositionCreatePage() {
     return (
@@ -14,10 +14,7 @@ export default function PositionCreatePage() {
                 </div>
 
                 <div className="rounded-lg border bg-card p-6">
-                    <PositionForm
-                        method="POST"
-                        action={route('position.store')}
-                    />
+                    <PositionForm method="POST" action={route('position.store')} />
                 </div>
             </div>
         </AppLayout>

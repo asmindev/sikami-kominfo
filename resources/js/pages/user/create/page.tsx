@@ -1,7 +1,7 @@
-import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/admin-layout';
-import { UserForm } from './components/user-form';
+import { Head } from '@inertiajs/react';
 import { route } from 'ziggy-js';
+import { UserForm } from './components/user-form';
 
 export default function UserCreatePage({ positions, roles }: { positions: any[]; roles: string[] }) {
     return (
@@ -14,12 +14,7 @@ export default function UserCreatePage({ positions, roles }: { positions: any[];
                 </div>
 
                 <div className="rounded-lg border bg-card p-6">
-                    <UserForm
-                        method="POST"
-                        action={route('user.store')}
-                        positions={positions}
-                        roles={roles}
-                    />
+                    <UserForm method="POST" action={route('user.store')} positions={positions} roles={roles} />
                 </div>
             </div>
         </AppLayout>

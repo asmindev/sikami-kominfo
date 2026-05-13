@@ -3,7 +3,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Form } from '@inertiajs/react';
-import { route } from 'ziggy-js';
 
 export function PositionForm({
     method = 'POST',
@@ -22,13 +21,7 @@ export function PositionForm({
                 {/* Name */}
                 <div className="space-y-2">
                     <Label htmlFor="name">Nama Jabatan</Label>
-                    <Input
-                        id="name"
-                        name="name"
-                        placeholder="Contoh: Kepala Dinas, Kepala Bidang, Staf"
-                        defaultValue={position?.name}
-                        required
-                    />
+                    <Input id="name" name="name" placeholder="Contoh: Kepala Dinas, Kepala Bidang, Staf" defaultValue={position?.name} required />
                 </div>
 
                 {/* Description */}
@@ -45,9 +38,7 @@ export function PositionForm({
 
                 {/* Buttons */}
                 <div className="flex gap-3">
-                    <Button type="submit">
-                        {position ? 'Perbarui Jabatan' : 'Tambah Jabatan'}
-                    </Button>
+                    <Button type="submit">{position ? 'Perbarui Jabatan' : 'Tambah Jabatan'}</Button>
                 </div>
             </div>
         </Form>

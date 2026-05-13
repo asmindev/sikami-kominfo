@@ -1,10 +1,10 @@
-import { Button } from '@/components/ui/button';
-import { Head, Link } from '@inertiajs/react';
-import AppLayout from '@/layouts/admin-layout';
-import { PositionTable } from './components/position-table';
-import { route } from 'ziggy-js';
 import { Can } from '@/components/can';
+import { Button } from '@/components/ui/button';
+import AppLayout from '@/layouts/admin-layout';
+import { Head, Link } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
+import { route } from 'ziggy-js';
+import { PositionTable } from './components/position-table';
 
 export default function PositionIndexPage({ positions }: { positions: any }) {
     return (

@@ -1,17 +1,9 @@
-import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/admin-layout';
-import { UserForm } from '../create/components/user-form';
+import { Head } from '@inertiajs/react';
 import { route } from 'ziggy-js';
+import { UserForm } from '../create/components/user-form';
 
-export default function UserEditPage({
-    user,
-    positions,
-    roles,
-}: {
-    user: any;
-    positions: any[];
-    roles: string[];
-}) {
+export default function UserEditPage({ user, positions, roles }: { user: any; positions: any[]; roles: string[] }) {
     return (
         <AppLayout>
             <Head title={`Edit Pengguna - ${user.name}`} />
@@ -22,13 +14,7 @@ export default function UserEditPage({
                 </div>
 
                 <div className="rounded-lg border bg-card p-6">
-                    <UserForm
-                        method="PUT"
-                        action={route('user.update', user.id)}
-                        user={user}
-                        positions={positions}
-                        roles={roles}
-                    />
+                    <UserForm method="PUT" action={route('user.update', user.id)} user={user} positions={positions} roles={roles} />
                 </div>
             </div>
         </AppLayout>

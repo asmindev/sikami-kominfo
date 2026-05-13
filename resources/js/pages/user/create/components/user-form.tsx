@@ -1,15 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import { Form } from '@inertiajs/react';
-import { route } from 'ziggy-js';
 
 export function UserForm({
     method = 'POST',
@@ -32,26 +24,13 @@ export function UserForm({
                 {/* Name */}
                 <div className="space-y-2">
                     <Label htmlFor="name">Nama Pengguna</Label>
-                    <Input
-                        id="name"
-                        name="name"
-                        placeholder="Masukkan nama pengguna"
-                        defaultValue={user?.name}
-                        required
-                    />
+                    <Input id="name" name="name" placeholder="Masukkan nama pengguna" defaultValue={user?.name} required />
                 </div>
 
                 {/* Email */}
                 <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        placeholder="user@example.com"
-                        defaultValue={user?.email}
-                        required
-                    />
+                    <Input id="email" name="email" type="email" placeholder="user@example.com" defaultValue={user?.email} required />
                 </div>
 
                 {/* Password */}
@@ -71,12 +50,7 @@ export function UserForm({
                 {/* NIP */}
                 <div className="space-y-2">
                     <Label htmlFor="nip">NIP</Label>
-                    <Input
-                        id="nip"
-                        name="nip"
-                        placeholder="Masukkan NIP (opsional)"
-                        defaultValue={user?.nip}
-                    />
+                    <Input id="nip" name="nip" placeholder="Masukkan NIP (opsional)" defaultValue={user?.nip} />
                 </div>
 
                 {/* Position */}
@@ -86,7 +60,7 @@ export function UserForm({
                         id="position_id"
                         name="position_id"
                         defaultValue={user?.position_id || ''}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                     >
                         <option value="">-- Pilih Jabatan --</option>
                         {positions.map((position: any) => (
@@ -105,7 +79,7 @@ export function UserForm({
                         name="role"
                         defaultValue={user?.roles?.[0]?.name || ''}
                         required
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                     >
                         <option value="">-- Pilih Role --</option>
                         {roles.map((role: string) => (
@@ -118,9 +92,7 @@ export function UserForm({
 
                 {/* Buttons */}
                 <div className="flex gap-3">
-                    <Button type="submit">
-                        {user ? 'Perbarui Pengguna' : 'Tambah Pengguna'}
-                    </Button>
+                    <Button type="submit">{user ? 'Perbarui Pengguna' : 'Tambah Pengguna'}</Button>
                 </div>
             </div>
         </Form>

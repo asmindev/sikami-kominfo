@@ -1,7 +1,7 @@
-import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/admin-layout';
-import { PositionForm } from '../create/components/position-form';
+import { Head } from '@inertiajs/react';
 import { route } from 'ziggy-js';
+import { PositionForm } from '../create/components/position-form';
 
 export default function PositionEditPage({ position }: { position: any }) {
     return (
@@ -14,11 +14,7 @@ export default function PositionEditPage({ position }: { position: any }) {
                 </div>
 
                 <div className="rounded-lg border bg-card p-6">
-                    <PositionForm
-                        method="PUT"
-                        action={route('position.update', position.id)}
-                        position={position}
-                    />
+                    <PositionForm method="PUT" action={route('position.update', position.id)} position={position} />
                 </div>
             </div>
         </AppLayout>

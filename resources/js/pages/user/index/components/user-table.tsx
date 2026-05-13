@@ -1,15 +1,8 @@
-import { Button } from '@/components/ui/button';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
 import { Can } from '@/components/can';
+import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Link, router } from '@inertiajs/react';
-import { Trash2, Edit } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 import { route } from 'ziggy-js';
 
 export function UserTable({ users }: { users: any }) {
@@ -70,7 +63,7 @@ export function UserTable({ users }: { users: any }) {
                         ))
                     ) : (
                         <TableRow>
-                            <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                            <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
                                 Tidak ada data pengguna
                             </TableCell>
                         </TableRow>

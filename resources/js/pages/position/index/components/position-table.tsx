@@ -1,15 +1,8 @@
-import { Button } from '@/components/ui/button';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
 import { Can } from '@/components/can';
+import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Link, router } from '@inertiajs/react';
-import { Trash2, Edit, Users } from 'lucide-react';
+import { Edit, Trash2, Users } from 'lucide-react';
 import { route } from 'ziggy-js';
 
 export function PositionTable({ positions }: { positions: any }) {
@@ -35,9 +28,7 @@ export function PositionTable({ positions }: { positions: any }) {
                         positions.data.map((position: any) => (
                             <TableRow key={position.id}>
                                 <TableCell className="font-medium">{position.name}</TableCell>
-                                <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
-                                    {position.description || '-'}
-                                </TableCell>
+                                <TableCell className="max-w-xs truncate text-sm text-muted-foreground">{position.description || '-'}</TableCell>
                                 <TableCell className="text-center">
                                     <div className="flex items-center justify-center gap-1 text-sm">
                                         <Users className="h-4 w-4" />
@@ -69,7 +60,7 @@ export function PositionTable({ positions }: { positions: any }) {
                         ))
                     ) : (
                         <TableRow>
-                            <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                            <TableCell colSpan={4} className="py-8 text-center text-muted-foreground">
                                 Tidak ada data jabatan
                             </TableCell>
                         </TableRow>

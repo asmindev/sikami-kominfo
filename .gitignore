@@ -1,7 +1,6 @@
 /.phpunit.cache
 /bootstrap/ssr
 /node_modules
-/public/build
 /public/hot
 /public/storage
 /resources/js/actions
@@ -25,3 +24,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# ignore ziggy
+/resources/js/ziggy.js
+/resources/js/ziggy.d.ts

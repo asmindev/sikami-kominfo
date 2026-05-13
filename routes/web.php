@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KamiController;
 use App\Http\Controllers\LeaderController;
+use App\Http\Controllers\PositionController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionnaireController;
 use App\Http\Controllers\ReportController;
@@ -51,6 +52,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::put('/user/{user}', [UserController::class, 'update'])->name('user.update');
     Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('user.destroy');
+
+    // Position Management
+    Route::get('/position', [PositionController::class, 'index'])->name('position.index');
+    Route::get('/position/create', [PositionController::class, 'create'])->name('position.create');
+    Route::post('/position', [PositionController::class, 'store'])->name('position.store');
+    Route::get('/position/{position}/edit', [PositionController::class, 'edit'])->name('position.edit');
+    Route::put('/position/{position}', [PositionController::class, 'update'])->name('position.update');
+    Route::delete('/position/{position}', [PositionController::class, 'destroy'])->name('position.destroy');
 
     // Leader Management
     Route::get('/leader', [LeaderController::class, 'index'])->name('leader.index');
